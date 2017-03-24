@@ -5,6 +5,10 @@
  */
 package currency_arbitrage;
 
+import java.net.URL;
+import java.io.IOException;
+import java.net.URLClassLoader;
+import java.net.MalformedURLException;
 import static com.sun.jmx.defaults.ServiceName.DOMAIN;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -14,7 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
+import org.json.JSONObject;
+import org.json.JSONArray;
+import com.sun.grizzly.utils; 
 /**
  *
  * @author suejanehan
@@ -58,13 +64,8 @@ public class Currency_Arbitrage {
 	    postData += argument.getKey() + "=" + argument.getValue();
 	}
 
-	// Create a new secret key
-	try {
-	    key = new SecretKeySpec( _secret.getBytes( "UTF-8"), "HmacSHA512" ); 
-	} catch( UnsupportedEncodingException uee) {
-	    System.err.println( "Unsupported encoding exception: " + uee.toString());
-	    return null;
-	} 
+       // Create a new secret key
+       key = new SecretKeySpec( _secret.getBytes( "UTF-8"), "HmacSHA512" ); 
 
 	// Create a new mac
 	try {
