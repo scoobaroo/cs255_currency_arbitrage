@@ -130,35 +130,63 @@ public class Currency_Arbitrage {
 	return null;  // The request failed.
     } 
     public static void main(String[] args) {
-        
-        Double BTCUSD = -Math.log(BTCUSD);
-        Double LTCBTC = -Math.log(LTCBTC);
-        Double BTCRUR = -Math.log(BTCRUR);
-        Double BTCEUR = -Math.log(BTCEUR);
-        Double LTCUSD = -Math.log(LTCUSD);
-        Double LTCRUR = -Math.log(LTCRUR);
-        Double LTCEUR = -Math.log(LTCEUR);
-        Double NMCBTC = -Math.log(NMCBTC);
-        Double NMCUSD = -Math.log(NMCUSD);
-        Double NVCBTC = -Math.log(NVCBTC);
-        Double NVCUSD = -Math.log(NVCUSD);
-        Double USDRUR = -Math.log(USDRUR);
-        Double EURUSD = -Math.log(EURUSD);
-        Double EURRUR = -Math.log(EURRUR);        
-        Double PPCBTC = -Math.log(PPCBTC);
-        Double DSHBTC = -Math.log(DSHBTC);
-        Double DSHUSD = -Math.log(DSHUSD);
-        Double DSHRUR = -Math.log(DSHRUR);
-        Double DSHEUR = -Math.log(DSHEUR);
-        Double DSHLTC = -Math.log(DSHLTC);
-        Double DSHETH = -Math.log(DSHETH);
-        Double ETHBTC = -Math.log(ETHBTC);
-        Double ETHUSD = -Math.log(ETHUSD);
-        Double ETHRUR = -Math.log(ETHRUR);
-        Double ETHEUR = -Math.log(ETHEUR);
-        Double ETHLTC = -Math.log(ETHLTC);
+        Double BTCUSD1 = 931.809;
+        Double LTCBTC1 = 0.00437;
+        Double BTCRUR1 = 54985.93752;
+        Double BTCEUR1 = 865.248;
+        Double LTCUSD1 = 4.069039;
+        Double LTCRUR1 = 239.63;
+        Double LTCEUR1 = 3.784;
+        Double NMCBTC1 = 0.00056;
+        Double NMCUSD1 = 0.516;
+        Double NVCBTC1 = 0.00236;
+        Double NVCUSD1 = 2.204;
+        Double USDRUR1 = 58.94;
+        Double EURUSD1 = 1.07957;
+        Double EURRUR1 = 63.86889;
+        Double PPCBTC1 = 0.00056;    
+        Double PPCUSD1 = 0.517;
+        Double DSHBTC1 = 0.10433;
+        Double DSHUSD1 = 97.56782;
+        Double DSHRUR1 = 5694.085;
+        Double DSHEUR1 = 90.329;
+        Double DSHLTC1 = 23.877;
+        Double DSHETH1 = 1.96;
+        Double ETHBTC1 = 0.05308;
+        Double ETHUSD1 = 49.50001;
+        Double ETHRUR1 = 2930.48608;
+        Double ETHEUR1 = 46.17211;
+        Double ETHLTC1 = 12.17379;
            
-  
+        Double BTCUSD = -Math.log(BTCUSD1);
+        Double LTCBTC = -Math.log(LTCBTC1);
+        Double BTCRUR = -Math.log(BTCRUR1);
+        Double BTCEUR = -Math.log(BTCEUR1);
+        Double LTCUSD = -Math.log(LTCUSD1);
+        Double LTCRUR = -Math.log(LTCRUR1);
+        Double LTCEUR = -Math.log(LTCEUR1);
+        Double NMCBTC = -Math.log(NMCBTC1);
+        Double NMCUSD = -Math.log(NMCUSD1);
+        Double NVCBTC = -Math.log(NVCBTC1);
+        Double NVCUSD = -Math.log(NVCUSD1);
+        Double USDRUR = -Math.log(USDRUR1);
+        Double EURUSD = -Math.log(EURUSD1);
+        Double EURRUR = -Math.log(EURRUR1);        
+        Double PPCBTC = -Math.log(PPCBTC1);
+        Double PPCUSD = -Math.log(PPCUSD1);
+        Double DSHBTC = -Math.log(DSHBTC1);
+        Double DSHUSD = -Math.log(DSHUSD1);
+        Double DSHRUR = -Math.log(DSHRUR1);
+        Double DSHEUR = -Math.log(DSHEUR1);
+        Double DSHLTC = -Math.log(DSHLTC1);
+        Double DSHETH = -Math.log(DSHETH1);
+        Double ETHBTC = -Math.log(ETHBTC1);
+        Double ETHUSD = -Math.log(ETHUSD1);
+        Double ETHRUR = -Math.log(ETHRUR1);
+        Double ETHEUR = -Math.log(ETHEUR1);
+        Double ETHLTC = -Math.log(ETHLTC1);
+           
+        System.out.println(LTCBTC);
         ArrayList<Currency> currencies = new ArrayList<>();
         currencies.add(Currency.BTC); //0
         currencies.add(Currency.USD); //1
@@ -278,6 +306,10 @@ public class Currency_Arbitrage {
         graph.edge[25].src = (Currency)  currencies.get(9);
         graph.edge[25].dest = (Currency)  currencies.get(2);
         graph.edge[25].weight = ETHLTC;
+        // add edge PPCUSD
+        graph.edge[26].src = (Currency)  currencies.get(7);
+        graph.edge[26].dest = (Currency)  currencies.get(1);
+        graph.edge[26].weight = PPCUSD;
  
         graph.BellmanFord(graph, 0);
     }
