@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.json.*;
-import com.sun.grizzly.utils.*; 
+import com.sun.grizzly.util.*; 
 import static java.lang.Math.log;
 
 /**
@@ -129,34 +129,28 @@ public class Currency_Arbitrage {
 	return null;  // The request failed.
     } 
     public static void main(String[] args) {
+        
         Double BTCUSD = -Math.log(BTCUSD);
         Double LTCBTC = -Math.log(LTCBTC);
         Double BTCRUR = -Math.log(BTCRUR);
         Double BTCEUR = -Math.log(BTCEUR);
-        
         Double LTCUSD = -Math.log(LTCUSD);
         Double LTCRUR = -Math.log(LTCRUR);
         Double LTCEUR = -Math.log(LTCEUR);
-        
         Double NMCBTC = -Math.log(NMCBTC);
         Double NMCUSD = -Math.log(NMCUSD);
-        
         Double NVCBTC = -Math.log(NVCBTC);
         Double NVCUSD = -Math.log(NVCUSD);
-        
         Double USDRUR = -Math.log(USDRUR);
         Double EURUSD = -Math.log(EURUSD);
-        Double EURRUR = -Math.log(EURRUR);
-        
+        Double EURRUR = -Math.log(EURRUR);        
         Double PPCBTC = -Math.log(PPCBTC);
-        
         Double DSHBTC = -Math.log(DSHBTC);
         Double DSHUSD = -Math.log(DSHUSD);
         Double DSHRUR = -Math.log(DSHRUR);
         Double DSHEUR = -Math.log(DSHEUR);
         Double DSHLTC = -Math.log(DSHLTC);
         Double DSHETH = -Math.log(DSHETH);
-        
         Double ETHBTC = -Math.log(ETHBTC);
         Double ETHUSD = -Math.log(ETHUSD);
         Double ETHRUR = -Math.log(ETHRUR);
@@ -164,17 +158,17 @@ public class Currency_Arbitrage {
         Double ETHLTC = -Math.log(ETHLTC);
         
         ArrayList currencies;
-        currencies = new ArrayList<Object>();
-        currencies.add("BTC");
-        currencies.add("USD");
-        currencies.add("LTC");
-        currencies.add("RUR");
-        currencies.add("EUR");
-        currencies.add("NMC");
-        currencies.add("NVC");
-        currencies.add("PPC");
-        currencies.add("DSH");
-        currencies.add("ETH");
+        currencies = new ArrayList<String>();
+        currencies.add("BTC"); //0
+        currencies.add("USD"); //1
+        currencies.add("LTC"); //2
+        currencies.add("RUR"); //3 
+        currencies.add("EUR"); //4
+        currencies.add("NMC"); //5
+        currencies.add("NVC"); //6
+        currencies.add("PPC"); //7
+        currencies.add("DSH"); //8
+        currencies.add("ETH"); //9
                 
         Graph graph;
         graph = new Graph(currencies,25);
@@ -223,70 +217,68 @@ public class Currency_Arbitrage {
         graph.edge[10].src = (String) currencies.get(6);
         graph.edge[10].dest = (String) currencies.get(1);
         graph.edge[10].weight = NVCUSD;
-        
-        ///NOT DONE YET///
-        // add edge xxxxxx
-        graph.edge[11].src = (String) currencies.get(0);
-        graph.edge[11].dest = (String) currencies.get(0);
-        graph.edge[11].weight = NMCBTC;
-        // add edge xxxxxx
-        graph.edge[12].src = (String) currencies.get(0);
-        graph.edge[12].dest = (String) currencies.get(0);
-        graph.edge[12].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[13].src = (String) currencies.get(0);
-        graph.edge[13].dest = (String) currencies.get(0);
-        graph.edge[13].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[14].src = (String) currencies.get(0);
+        // add edge USDRUR
+        graph.edge[11].src = (String) currencies.get(1);
+        graph.edge[11].dest = (String) currencies.get(3);
+        graph.edge[11].weight = USDRUR;
+        // add edge EURUSD
+        graph.edge[12].src = (String) currencies.get(4);
+        graph.edge[12].dest = (String) currencies.get(1);
+        graph.edge[12].weight = EURUSD;
+        // add edge EURRUR
+        graph.edge[13].src = (String) currencies.get(4);
+        graph.edge[13].dest = (String) currencies.get(3);
+        graph.edge[13].weight = EURRUR;
+        // add edge PPCBTC
+        graph.edge[14].src = (String) currencies.get(7);
         graph.edge[14].dest = (String) currencies.get(0);
-        graph.edge[14].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[15].src = (String) currencies.get(0);
+        graph.edge[14].weight = PPCBTC;
+        // add edge DSHBTC
+        graph.edge[15].src = (String) currencies.get(8);
         graph.edge[15].dest = (String) currencies.get(0);
-        graph.edge[15].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[16].src = (String) currencies.get(0);
-        graph.edge[16].dest = (String) currencies.get(0);
-        graph.edge[16].weight = NMCBTC;
-                // add edge NMCBTC
-        graph.edge[17].src = (String) currencies.get(0);
-        graph.edge[17].dest = (String) currencies.get(0);
-        graph.edge[17].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[18].src = (String) currencies.get(0);
-        graph.edge[18].dest = (String) currencies.get(0);
-        graph.edge[18].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[19].src = (String) currencies.get(0);
-        graph.edge[19].dest = (String) currencies.get(0);
-        graph.edge[19].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[20].src = (String) currencies.get(0);
-        graph.edge[20].dest = (String) currencies.get(0);
-        graph.edge[20].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[21].src = (String) currencies.get(0);
+        graph.edge[15].weight = DSHBTC;
+        // add edge DSHUSD
+        graph.edge[16].src = (String) currencies.get(8);
+        graph.edge[16].dest = (String) currencies.get(1);
+        graph.edge[16].weight = DSHUSD;
+        // add edge DSHRUR
+        graph.edge[17].src = (String) currencies.get(8);
+        graph.edge[17].dest = (String) currencies.get(3);
+        graph.edge[17].weight = DSHRUR;
+        // add edge DSHEUR
+        graph.edge[18].src = (String) currencies.get(8);
+        graph.edge[18].dest = (String) currencies.get(4);
+        graph.edge[18].weight = DSHEUR;
+        // add edge DSHLTC
+        graph.edge[19].src = (String) currencies.get(8);
+        graph.edge[19].dest = (String) currencies.get(2);
+        graph.edge[19].weight = DSHLTC;
+        // add edge DSHETH
+        graph.edge[20].src = (String) currencies.get(8);
+        graph.edge[20].dest = (String) currencies.get(9);
+        graph.edge[20].weight = DSHETH;
+        // add edge ETHBTC
+        graph.edge[21].src = (String) currencies.get(9);
         graph.edge[21].dest = (String) currencies.get(0);
-        graph.edge[21].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[22].src = (String) currencies.get(0);
-        graph.edge[22].dest = (String) currencies.get(0);
-        graph.edge[22].weight = NMCBTC;
-        // add edge xxx
-        graph.edge[23].src = (String) currencies.get(0);
-        graph.edge[23].dest = (String) currencies.get(0);
-        graph.edge[23].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[24].src = (String) currencies.get(0);
-        graph.edge[24].dest = (String) currencies.get(0);
-        graph.edge[24].weight = NMCBTC;
-        // add edge NMCBTC
-        graph.edge[25].src = (String) currencies.get(0);
-        graph.edge[25].dest = (String) currencies.get(0);
-        graph.edge[25].weight = NMCBTC;
+        graph.edge[21].weight = ETHBTC;
+        // add edge ETHUSD
+        graph.edge[22].src = (String) currencies.get(9);
+        graph.edge[22].dest = (String) currencies.get(1);
+        graph.edge[22].weight = ETHUSD;
+        // add edge ETHRUR
+        graph.edge[23].src = (String) currencies.get(9);
+        graph.edge[23].dest = (String) currencies.get(3);
+        graph.edge[23].weight = ETHRUR;
+        // add edge ETHEUR
+        graph.edge[24].src = (String) currencies.get(9);
+        graph.edge[24].dest = (String) currencies.get(4);
+        graph.edge[24].weight = ETHEUR;
+        // add edge ETHLTC
+        graph.edge[25].src = (String) currencies.get(9);
+        graph.edge[25].dest = (String) currencies.get(2);
+        graph.edge[25].weight = ETHLTC;
  
- 
+        graph.BellmanFord(graph, 0);
     }
     
 }

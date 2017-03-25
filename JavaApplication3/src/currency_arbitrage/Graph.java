@@ -40,7 +40,7 @@ public class Graph
     // The main function that finds shortest distances from src
     // to all other vertices using Bellman-Ford algorithm.  The
     // function also detects negative weight cycle
-    void BellmanFord(Graph graph,int src)
+    void BellmanFord(Graph graph, int src)
     {
         ArrayList<String> V = graph.V;
         E = graph.E;
@@ -85,7 +85,7 @@ public class Graph
     }
  
     // A utility function used to print the solution
-    void printArr(int dist[], int V)
+    void printArr(double dist[], int V)
     {
         System.out.println("Vertex   Distance from Source");
         for (int i=0; i<V; ++i)
