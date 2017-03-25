@@ -15,20 +15,20 @@ public class Graph
 {
     // A class to represent a weighted edge in graph
     class Edge {
-        String src, dest;
+        Currency src, dest;
         Double weight;
         Edge() {
-            src = dest = "";
+            src = dest = Currency.BTC;
             weight = 0.0;
         }
     };
  
     int E;
-    ArrayList<String> V;
+    ArrayList<Currency> V;
     Edge edge[];
  
     // Creates a graph with V vertices and E edges
-    Graph(ArrayList<String> v, int e)
+    Graph(ArrayList<Currency> v, int e)
     {
         V = v;
         E = e;
@@ -42,9 +42,9 @@ public class Graph
     // function also detects negative weight cycle
     void BellmanFord(Graph graph, int src)
     {
-        ArrayList<String> V = graph.V;
+        ArrayList<Currency> V = graph.V;
         E = graph.E;
-        double dist[] = new double[V];
+        double dist[] = new double[V.size()];
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
@@ -59,8 +59,8 @@ public class Graph
         {
             for (int j=0; j<E; ++j)
             {
-                String u = graph.edge[j].src;
-                String v = graph.edge[j].dest;
+                Currency u = graph.edge[j].src;
+                Currency v = graph.edge[j].dest;
                 double weight = graph.edge[j].weight;
                 if (dist[u]!=Integer.MAX_VALUE &&
                     dist[u]+weight<dist[v])
@@ -74,8 +74,8 @@ public class Graph
         //  path, then there is a cycle.
         for (int j=0; j<E; ++j)
         {
-            String u = graph.edge[j].src;
-            String v = graph.edge[j].dest;
+            Currency u = graph.edge[j].src;
+            Currency v = graph.edge[j].dest;
             double weight = graph.edge[j].weight;
             if (dist[u]!=Integer.MAX_VALUE &&
                 dist[u]+weight<dist[v])
