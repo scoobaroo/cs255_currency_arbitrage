@@ -281,6 +281,7 @@ public class Currency_Arbitrage {
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter starting currency: ");
         String n = reader.next();
+        Vertex src = n;
         
         graph.BellmanFord(graph, USD);
     }
