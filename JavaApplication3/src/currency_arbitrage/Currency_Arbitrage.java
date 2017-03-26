@@ -130,7 +130,7 @@ public class Currency_Arbitrage {
 	return null;  // The request failed.
     } 
     public static void main(String[] args) {
-        
+        // original exchange rates
         Double BTCUSD1 = 931.809;
         Double LTCBTC1 = 0.00437;
         Double BTCRUR1 = 54985.93752;
@@ -158,7 +158,7 @@ public class Currency_Arbitrage {
         Double ETHRUR1 = 2930.48608;
         Double ETHEUR1 = 46.17211;
         Double ETHLTC1 = 12.17379;
-                 
+        //creating -Log of original exchange rates to use in bellman ford
         Double BTCUSD = -Math.log(BTCUSD1);
         Double LTCBTC = -Math.log(LTCBTC1);
         Double BTCRUR = -Math.log(BTCRUR1);
@@ -186,19 +186,10 @@ public class Currency_Arbitrage {
         Double ETHRUR = -Math.log(ETHRUR1);
         Double ETHEUR = -Math.log(ETHEUR1);
         Double ETHLTC = -Math.log(ETHLTC1);
-        
-        double[] currencyRatioArray = {BTCUSD,LTCBTC,BTCRUR,BTCEUR,LTCUSD,LTCRUR,LTCEUR,NMCBTC,NMCUSD,NVCBTC,
-        NVCUSD,USDRUR,EURUSD,EURRUR,PPCBTC,DSHBTC,DSHUSD,DSHRUR,DSHEUR,DSHLTC,DSHETH,ETHBTC,ETHUSD,ETHRUR,
-        ETHEUR,ETHLTC,PPCUSD};
-        
-        double[] currencyRatioInverseArray = new double[100];
-        for (int i=0 ;i<currencyRatioArray.length;i++){
-            currencyRatioInverseArray[i]= -currencyRatioArray[i];
-        }
-        
+        //checking if log(1/x) = -log(x)
         System.out.println(LTCBTC);
         System.out.println(Math.log(1/LTCBTC1));
-        
+        //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC);
         Vertex USD =new Vertex(Currency.USD);
         Vertex LTC =new Vertex(Currency.LTC);
@@ -209,6 +200,7 @@ public class Currency_Arbitrage {
         Vertex PPC =new Vertex(Currency.PPC);
         Vertex DSH =new Vertex(Currency.DSH);
         Vertex ETH =new Vertex(Currency.ETH);
+        //creating ArrayList of vertexes to use in bellman ford
         ArrayList<Vertex> currencies = new ArrayList<>();
         currencies.add(BTC); //0
         currencies.add(USD); //1
@@ -220,6 +212,7 @@ public class Currency_Arbitrage {
         currencies.add(PPC); //7
         currencies.add(DSH); //8
         currencies.add(ETH); //9
+        //creating edges to use in bellman ford
         Edge btcusd =new Edge(BTC,USD,BTCUSD);
         Edge ltcbtc =new Edge(LTC,BTC,LTCBTC);
         Edge btcrur =new Edge(BTC,RUR,BTCRUR);
@@ -247,7 +240,7 @@ public class Currency_Arbitrage {
         Edge etheur =new Edge(ETH,EUR,ETHEUR);
         Edge ethltc =new Edge(ETH,LTC,ETHLTC);
         Edge ppcusd =new Edge(PPC,USD,PPCUSD);
-        
+        //creating list of these edges
         ArrayList<Edge> edges = new ArrayList<>();
         edges.add(btcusd);
         edges.add(ltcbtc);
@@ -279,13 +272,17 @@ public class Currency_Arbitrage {
         
         Graph graph;
         graph = new Graph(currencies,edges);
- 
-        for (int i = 27; i< graph.edges.size()+27 ; i++){
-            graph.edges.get(i).src = graph.edges.get(i-27).dest;
-            graph.edges.get(i).dest = graph.edges.get(i-27).src;
-            graph.edges.get(i).weight = currencyRatioInverseArray[i-27];
+        //creating new edges for reversing directions of edges with new weights, sources, and destinations
+        for (int i = 0; i< graph.edges.size() ; i++){
+            Edge e = new Edge(graph.edges.get(i).dest,graph.edges.get(i).src,-graph.edges.get(i).weight);
+            edges.add(e);
         }
-        graph.BellmanFord(graph, 0);
+        
+        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        System.out.println("Enter starting currency: ");
+        String n = reader.next();
+        
+        graph.BellmanFord(graph, USD);
     }
     
 }

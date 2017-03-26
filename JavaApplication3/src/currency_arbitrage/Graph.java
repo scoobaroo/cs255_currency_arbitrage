@@ -6,8 +6,7 @@
 package currency_arbitrage;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -16,7 +15,6 @@ import java.util.Map;
 public class Graph {
     public ArrayList<Vertex> vertices;
     public ArrayList<Edge> edges;
-
     public Graph(ArrayList<Vertex> vertices, ArrayList<Edge> edges) {
         super();
         this.vertices = vertices;
@@ -26,56 +24,56 @@ public class Graph {
     // The main function that finds shortest distances from src
     // to all other vertices using Bellman-Ford algorithm.  The
     // function also detects negative weight cycle
-    void BellmanFord(Graph graph, int src)
+    void BellmanFord(Graph graph, Vertex source)
     {
+        Vertex src=source;
+        int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-        double dist[] = new double[vertices.size()];
+        HashMap<Vertex, Double> dist = new HashMap(vertices.size());
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
-        for (int i=0; i<V.size(); ++i)
-            dist[i] = Double.MAX_VALUE;
-        dist[src] = 0.0;
- 
+        for(i=0;i<vertices.size();++i){
+            dist.put(vertices.get(i),99999999.0);
+        }
+       
+        dist.put(src,0.0);
+        
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
         // have at-most |V| - 1 edges
-        for (int i=1; i<V.size(); ++i)
-        {
-            for (int j=0; j<E; ++j)
-            {
+        for (i = 0; i < vertices.size() - 1; ++i) {
+            for (j = 0; j < edges.size(); ++j) { //here i am calculating the shortest path
+                Edge e = graph.edges.get(j);
                 Vertex u = graph.edges.get(j).src;
                 Vertex v = graph.edges.get(j).dest;
-                double weight = graph.edges.get(j).weight;
-                if (dist[u]!=Double.MAX_VALUE && dist[u]+weight<dist[v]){
-                    dist[v]=dist[u]+weight;
+                if (dist.get(u) + e.weight < dist.get(v)) {
+                    dist.put(v, dist.get(u) + e.weight);
                 }
-            }
-        }
+             } 
+         }
  
         // Step 3: check for negative-weight cycles.  The above
         // step guarantees shortest distances if graph doesn't
         // contain negative weight cycle. If we get a shorter
         //  path, then there is a cycle.
-        for (int j=0; j<E; ++j)
+        for (int k=0; k<edges.size(); ++k)
         {
-            Vertex u = graph.edges.get(j).src;
-            Vertex v = graph.edges.get(j).dest;
-            double weight = graph.edges.get(j).weight;
-            if (dist[u]!=Double.MAX_VALUE &&
-                dist[u]+weight<dist[v])
+            Edge e = graph.edges.get(k);
+            Vertex u = graph.edges.get(k).src;
+            Vertex v = graph.edges.get(k).dest;
+            if (dist.get(u)+e.weight<dist.get(v))
               System.out.println("Graph contains negative weight cycle");
         }
-        printArr(dist, V);
+        printDistanceMap(dist, vertices);
     }
  
     // A utility function used to print the solution
-    void printArr(double dist[], int V)
+    void printDistanceMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {
-        System.out.println("Vertex   Distance from Source");
-        for (int i=0; i<V; ++i)
-            System.out.println(i+"\t\t"+dist[i]);
+        System.out.println("Vertex Distance from Source");
+        for (int i=0; i<V.size(); ++i)
+            System.out.println(i+"\t\t"+distance.get(V.get(i)));
     }
- 
 }

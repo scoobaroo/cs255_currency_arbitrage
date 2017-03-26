@@ -17,5 +17,4 @@ public class Vertex {
         this.currency = currency;
     }
 
-
 }
