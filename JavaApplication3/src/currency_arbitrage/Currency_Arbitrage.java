@@ -130,6 +130,7 @@ public class Currency_Arbitrage {
 	return null;  // The request failed.
     } 
     public static void main(String[] args) {
+        
         Double BTCUSD1 = 931.809;
         Double LTCBTC1 = 0.00437;
         Double BTCRUR1 = 54985.93752;
@@ -157,7 +158,7 @@ public class Currency_Arbitrage {
         Double ETHRUR1 = 2930.48608;
         Double ETHEUR1 = 46.17211;
         Double ETHLTC1 = 12.17379;
-           
+                 
         Double BTCUSD = -Math.log(BTCUSD1);
         Double LTCBTC = -Math.log(LTCBTC1);
         Double BTCRUR = -Math.log(BTCRUR1);
@@ -185,8 +186,18 @@ public class Currency_Arbitrage {
         Double ETHRUR = -Math.log(ETHRUR1);
         Double ETHEUR = -Math.log(ETHEUR1);
         Double ETHLTC = -Math.log(ETHLTC1);
-           
+        
+        double[] currencyRatioArray = {BTCUSD,LTCBTC,BTCRUR,BTCEUR,LTCUSD,LTCRUR,LTCEUR,NMCBTC,NMCUSD,NVCBTC,
+        NVCUSD,USDRUR,EURUSD,EURRUR,PPCBTC,DSHBTC,DSHUSD,DSHRUR,DSHEUR,DSHLTC,DSHETH,ETHBTC,ETHUSD,ETHRUR,
+        ETHEUR,ETHLTC,PPCUSD};
+        double[] currencyRatioInverseArray = new double[100];
+        for (int i=0 ;i<currencyRatioArray.length;i++){
+            currencyRatioInverseArray[i]= -currencyRatioArray[i];
+        }
+        
         System.out.println(LTCBTC);
+        System.out.println(Math.log(1/LTCBTC1));
+        
         ArrayList<Currency> currencies = new ArrayList<>();
         currencies.add(Currency.BTC); //0
         currencies.add(Currency.USD); //1
@@ -310,7 +321,12 @@ public class Currency_Arbitrage {
         graph.edge[26].src = (Currency)  currencies.get(7);
         graph.edge[26].dest = (Currency)  currencies.get(1);
         graph.edge[26].weight = PPCUSD;
- 
+        
+        for (int i = 27; i< graph.edge.length+27 ; i++){
+            graph.edge[i].src = graph.edge[i-27].dest;
+            graph.edge[i].dest = graph.edge[i-27].src;
+            graph.edge[i].weight = currencyRatioInverseArray[i-27];
+        }
         graph.BellmanFord(graph, 0);
     }
     
