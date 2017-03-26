@@ -6,51 +6,37 @@
 package currency_arbitrage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author suejanehan
  */
-public class Graph
-{
-    // A class to represent a weighted edge in graph
-    class Edge {
-        Currency src, dest;
-        Double weight;
-        Edge() {
-            src = dest = Currency.BTC;
-            weight = 0.0;
-        }
-    };
- 
-    int E;
-    ArrayList<Currency> V;
-    Edge edge[];
- 
-    // Creates a graph with V vertices and E edges
-    Graph(ArrayList<Currency> v, int e)
-    {
-        V = v;
-        E = e;
-        edge = new Edge[e];
-        for (int i=0; i<e; ++i)
-            edge[i] = new Edge();
+public class Graph {
+    public ArrayList<Vertex> vertices;
+    public ArrayList<Edge> edges;
+
+    public Graph(ArrayList<Vertex> vertices, ArrayList<Edge> edges) {
+        super();
+        this.vertices = vertices;
+        this.edges = edges;
     }
- 
+
     // The main function that finds shortest distances from src
     // to all other vertices using Bellman-Ford algorithm.  The
     // function also detects negative weight cycle
     void BellmanFord(Graph graph, int src)
     {
-        ArrayList<Currency> V = graph.V;
-        E = graph.E;
-        double dist[] = new double[V.size()];
+        vertices = graph.vertices;
+        edges = graph.edges;
+        double dist[] = new double[vertices.size()];
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
         for (int i=0; i<V.size(); ++i)
-            dist[i] = Integer.MAX_VALUE;
-        dist[src] = 0;
+            dist[i] = Double.MAX_VALUE;
+        dist[src] = 0.0;
  
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
@@ -59,12 +45,12 @@ public class Graph
         {
             for (int j=0; j<E; ++j)
             {
-                Currency u = graph.edge[j].src;
-                Currency v = graph.edge[j].dest;
-                double weight = graph.edge[j].weight;
-                if (dist[u]!=Integer.MAX_VALUE &&
-                    dist[u]+weight<dist[v])
+                Vertex u = graph.edges.get(j).src;
+                Vertex v = graph.edges.get(j).dest;
+                double weight = graph.edges.get(j).weight;
+                if (dist[u]!=Double.MAX_VALUE && dist[u]+weight<dist[v]){
                     dist[v]=dist[u]+weight;
+                }
             }
         }
  
@@ -74,10 +60,10 @@ public class Graph
         //  path, then there is a cycle.
         for (int j=0; j<E; ++j)
         {
-            Currency u = graph.edge[j].src;
-            Currency v = graph.edge[j].dest;
-            double weight = graph.edge[j].weight;
-            if (dist[u]!=Integer.MAX_VALUE &&
+            Vertex u = graph.edges.get(j).src;
+            Vertex v = graph.edges.get(j).dest;
+            double weight = graph.edges.get(j).weight;
+            if (dist[u]!=Double.MAX_VALUE &&
                 dist[u]+weight<dist[v])
               System.out.println("Graph contains negative weight cycle");
         }
@@ -92,15 +78,4 @@ public class Graph
             System.out.println(i+"\t\t"+dist[i]);
     }
  
-    // Driver method to test above function
-    public static void main(String[] args)
-    {
-        int V = 5;  // Number of vertices in graph
-        int E = 8;  // Number of edges in graph
- 
-        Graph graph = new Graph(V, E);
-        
-        // add edge 0-1 (or A-B in above figure)
-        graph.BellmanFord(graph, 0);
-    }
 }

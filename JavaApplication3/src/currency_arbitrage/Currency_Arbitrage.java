@@ -190,6 +190,7 @@ public class Currency_Arbitrage {
         double[] currencyRatioArray = {BTCUSD,LTCBTC,BTCRUR,BTCEUR,LTCUSD,LTCRUR,LTCEUR,NMCBTC,NMCUSD,NVCBTC,
         NVCUSD,USDRUR,EURUSD,EURRUR,PPCBTC,DSHBTC,DSHUSD,DSHRUR,DSHEUR,DSHLTC,DSHETH,ETHBTC,ETHUSD,ETHRUR,
         ETHEUR,ETHLTC,PPCUSD};
+        
         double[] currencyRatioInverseArray = new double[100];
         for (int i=0 ;i<currencyRatioArray.length;i++){
             currencyRatioInverseArray[i]= -currencyRatioArray[i];
@@ -198,134 +199,91 @@ public class Currency_Arbitrage {
         System.out.println(LTCBTC);
         System.out.println(Math.log(1/LTCBTC1));
         
-        ArrayList<Currency> currencies = new ArrayList<>();
-        currencies.add(Currency.BTC); //0
-        currencies.add(Currency.USD); //1
-        currencies.add(Currency.LTC); //2
-        currencies.add(Currency.RUR); //3 
-        currencies.add(Currency.EUR); //4
-        currencies.add(Currency.NMC); //5
-        currencies.add(Currency.NVC); //6
-        currencies.add(Currency.PPC); //7
-        currencies.add(Currency.DSH); //8
-        currencies.add(Currency.ETH); //9
-               
+        Vertex BTC =new Vertex(Currency.BTC);
+        Vertex USD =new Vertex(Currency.USD);
+        Vertex LTC =new Vertex(Currency.LTC);
+        Vertex RUR =new Vertex(Currency.RUR);
+        Vertex EUR =new Vertex(Currency.EUR);
+        Vertex NMC =new Vertex(Currency.NMC);
+        Vertex NVC =new Vertex(Currency.NVC);
+        Vertex PPC =new Vertex(Currency.PPC);
+        Vertex DSH =new Vertex(Currency.DSH);
+        Vertex ETH =new Vertex(Currency.ETH);
+        ArrayList<Vertex> currencies = new ArrayList<>();
+        currencies.add(BTC); //0
+        currencies.add(USD); //1
+        currencies.add(LTC); //2
+        currencies.add(RUR); //3 
+        currencies.add(EUR); //4
+        currencies.add(NMC); //5
+        currencies.add(NVC); //6
+        currencies.add(PPC); //7
+        currencies.add(DSH); //8
+        currencies.add(ETH); //9
+        Edge btcusd =new Edge(BTC,USD,BTCUSD);
+        Edge ltcbtc =new Edge(LTC,BTC,LTCBTC);
+        Edge btcrur =new Edge(BTC,RUR,BTCRUR);
+        Edge btceur =new Edge(BTC,EUR,BTCEUR);
+        Edge ltcusd =new Edge(LTC,USD,LTCUSD);
+        Edge ltcrur =new Edge(LTC,RUR,LTCRUR);
+        Edge ltceur =new Edge(LTC,EUR,LTCEUR);
+        Edge nmcbtc =new Edge(NMC,BTC,NMCBTC);
+        Edge nmcusd =new Edge(NMC,USD,NMCUSD);
+        Edge nvcbtc =new Edge(NVC,BTC,NVCBTC);
+        Edge nvcusd =new Edge(NVC,USD,NVCUSD);
+        Edge usdrur =new Edge(USD,RUR,USDRUR);
+        Edge eurusd =new Edge(EUR,USD,EURUSD);
+        Edge eurrur =new Edge(EUR,RUR,EURRUR);
+        Edge ppcbtc =new Edge(PPC,BTC,PPCBTC);
+        Edge dshbtc =new Edge(DSH,BTC,DSHBTC);
+        Edge dshusd =new Edge(DSH,USD,DSHUSD);
+        Edge dshrur =new Edge(DSH,RUR,DSHRUR);
+        Edge dsheur =new Edge(DSH,EUR,DSHEUR);
+        Edge dshltc =new Edge(DSH,LTC,DSHLTC);
+        Edge dsheth =new Edge(DSH,ETH,DSHETH);
+        Edge ethbtc =new Edge(ETH,BTC,ETHBTC);
+        Edge ethusd =new Edge(ETH,USD,ETHUSD);
+        Edge ethrur =new Edge(ETH,RUR,ETHRUR);
+        Edge etheur =new Edge(ETH,EUR,ETHEUR);
+        Edge ethltc =new Edge(ETH,LTC,ETHLTC);
+        Edge ppcusd =new Edge(PPC,USD,PPCUSD);
+        
+        ArrayList<Edge> edges = new ArrayList<>();
+        edges.add(btcusd);
+        edges.add(ltcbtc);
+        edges.add(btcrur);
+        edges.add(btceur);
+        edges.add(ltcusd);
+        edges.add(ltcrur);
+        edges.add(ltceur);
+        edges.add(nmcbtc);
+        edges.add(nmcusd);
+        edges.add(nvcbtc);
+        edges.add(nvcusd);
+        edges.add(usdrur);
+        edges.add(eurusd);
+        edges.add(eurrur);
+        edges.add(ppcbtc);
+        edges.add(dshbtc);
+        edges.add(dshusd);
+        edges.add(dshrur);
+        edges.add(dsheur);
+        edges.add(dshltc);
+        edges.add(dsheth);
+        edges.add(ethbtc);
+        edges.add(ethusd);
+        edges.add(ethrur);
+        edges.add(etheur);
+        edges.add(ethltc);
+        edges.add(ppcusd);
+        
         Graph graph;
-        graph = new Graph(currencies,25);
-        
-        // add edge BTCUSD
-        graph.edge[0].src = (Currency) currencies.get(0);
-        graph.edge[0].dest = (Currency) currencies.get(1);
-        graph.edge[0].weight = BTCUSD;
-        // add edge LTCBTC
-        graph.edge[1].src = (Currency) currencies.get(2);
-        graph.edge[1].dest = (Currency) currencies.get(0);
-        graph.edge[1].weight = LTCBTC;
-        // add edge BTCRUR
-        graph.edge[2].src = (Currency) currencies.get(0);
-        graph.edge[2].dest = (Currency) currencies.get(3);
-        graph.edge[2].weight = BTCRUR;
-        // add edge BTCEUR
-        graph.edge[3].src = (Currency) currencies.get(0);
-        graph.edge[3].dest = (Currency)  currencies.get(4);
-        graph.edge[3].weight = BTCEUR;
-        // add edge LTCUSD
-        graph.edge[4].src =(Currency) currencies.get(2);
-        graph.edge[4].dest = (Currency)  currencies.get(1);
-        graph.edge[4].weight = LTCUSD;
-        // add edge LTCRUR
-        graph.edge[5].src = (Currency)  currencies.get(2);
-        graph.edge[5].dest = (Currency)  currencies.get(3);
-        graph.edge[5].weight = LTCRUR;
-        // add edge LTCEUR
-        graph.edge[6].src = (Currency) currencies.get(2);
-        graph.edge[6].dest = (Currency)  currencies.get(4);
-        graph.edge[6].weight = LTCEUR;
-        // add edge NMCBTC
-        graph.edge[7].src = (Currency) currencies.get(5);
-        graph.edge[7].dest = (Currency)  currencies.get(0);
-        graph.edge[7].weight = NMCBTC;
-        // add edge NMCUSD
-        graph.edge[8].src = (Currency)  currencies.get(5);
-        graph.edge[8].dest = (Currency)  currencies.get(1);
-        graph.edge[8].weight = NMCUSD;
-        // add edge NVCBTC
-        graph.edge[9].src = (Currency)  currencies.get(6);
-        graph.edge[9].dest = (Currency) currencies.get(0);
-        graph.edge[9].weight = NVCBTC;
-        // add edge NVCUSD
-        graph.edge[10].src = (Currency)  currencies.get(6);
-        graph.edge[10].dest = (Currency)  currencies.get(1);
-        graph.edge[10].weight = NVCUSD;
-        // add edge USDRUR
-        graph.edge[11].src = (Currency)  currencies.get(1);
-        graph.edge[11].dest = (Currency)  currencies.get(3);
-        graph.edge[11].weight = USDRUR;
-        // add edge EURUSD
-        graph.edge[12].src = (Currency)  currencies.get(4);
-        graph.edge[12].dest = (Currency)  currencies.get(1);
-        graph.edge[12].weight = EURUSD;
-        // add edge EURRUR
-        graph.edge[13].src =(Currency) currencies.get(4);
-        graph.edge[13].dest = (Currency)  currencies.get(3);
-        graph.edge[13].weight = EURRUR;
-        // add edge PPCBTC
-        graph.edge[14].src =(Currency)  currencies.get(7);
-        graph.edge[14].dest =(Currency)  currencies.get(0);
-        graph.edge[14].weight = PPCBTC;
-        // add edge DSHBTC
-        graph.edge[15].src = (Currency)  currencies.get(8);
-        graph.edge[15].dest = (Currency)  currencies.get(0);
-        graph.edge[15].weight = DSHBTC;
-        // add edge DSHUSD
-        graph.edge[16].src = (Currency)  currencies.get(8);
-        graph.edge[16].dest = (Currency)  currencies.get(1);
-        graph.edge[16].weight = DSHUSD;
-        // add edge DSHRUR
-        graph.edge[17].src = (Currency)  currencies.get(8);
-        graph.edge[17].dest = (Currency)  currencies.get(3);
-        graph.edge[17].weight = DSHRUR;
-        // add edge DSHEUR
-        graph.edge[18].src = (Currency)  currencies.get(8);
-        graph.edge[18].dest = (Currency)  currencies.get(4);
-        graph.edge[18].weight = DSHEUR;
-        // add edge DSHLTC
-        graph.edge[19].src = (Currency) currencies.get(8);
-        graph.edge[19].dest = (Currency)  currencies.get(2);
-        graph.edge[19].weight = DSHLTC;
-        // add edge DSHETH
-        graph.edge[20].src = (Currency)  currencies.get(8);
-        graph.edge[20].dest = (Currency)  currencies.get(9);
-        graph.edge[20].weight = DSHETH;
-        // add edge ETHBTC
-        graph.edge[21].src = (Currency)  currencies.get(9);
-        graph.edge[21].dest = (Currency)  currencies.get(0);
-        graph.edge[21].weight = ETHBTC;
-        // add edge ETHUSD
-        graph.edge[22].src = (Currency)  currencies.get(9);
-        graph.edge[22].dest = (Currency) currencies.get(1);
-        graph.edge[22].weight = ETHUSD;
-        // add edge ETHRUR
-        graph.edge[23].src =(Currency) currencies.get(9);
-        graph.edge[23].dest = (Currency)  currencies.get(3);
-        graph.edge[23].weight = ETHRUR;
-        // add edge ETHEUR
-        graph.edge[24].src = (Currency)  currencies.get(9);
-        graph.edge[24].dest = (Currency)  currencies.get(4);
-        graph.edge[24].weight = ETHEUR;
-        // add edge ETHLTC
-        graph.edge[25].src = (Currency)  currencies.get(9);
-        graph.edge[25].dest = (Currency)  currencies.get(2);
-        graph.edge[25].weight = ETHLTC;
-        // add edge PPCUSD
-        graph.edge[26].src = (Currency)  currencies.get(7);
-        graph.edge[26].dest = (Currency)  currencies.get(1);
-        graph.edge[26].weight = PPCUSD;
-        
-        for (int i = 27; i< graph.edge.length+27 ; i++){
-            graph.edge[i].src = graph.edge[i-27].dest;
-            graph.edge[i].dest = graph.edge[i-27].src;
-            graph.edge[i].weight = currencyRatioInverseArray[i-27];
+        graph = new Graph(currencies,edges);
+ 
+        for (int i = 27; i< graph.edges.size()+27 ; i++){
+            graph.edges.get(i).src = graph.edges.get(i-27).dest;
+            graph.edges.get(i).dest = graph.edges.get(i-27).src;
+            graph.edges.get(i).weight = currencyRatioInverseArray[i-27];
         }
         graph.BellmanFord(graph, 0);
     }
