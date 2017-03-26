@@ -5,6 +5,8 @@
  */
 package currency_arbitrage;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.lang.*;
 import java.io.*;
 import java.net.URL;
@@ -269,6 +271,11 @@ public class Currency_Arbitrage {
         edges.add(etheur);
         edges.add(ethltc);
         edges.add(ppcusd);
+                
+        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        System.out.println("Enter starting currency: ");
+        String n = reader.next();
+//        Vertex src = n;
         
         Graph graph;
         graph = new Graph(currencies,edges);
@@ -277,12 +284,6 @@ public class Currency_Arbitrage {
             Edge e = new Edge(graph.edges.get(i).dest,graph.edges.get(i).src,-graph.edges.get(i).weight);
             edges.add(e);
         }
-        
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.println("Enter starting currency: ");
-        String n = reader.next();
-        Vertex src = n;
-        
         graph.BellmanFord(graph, USD);
     }
     

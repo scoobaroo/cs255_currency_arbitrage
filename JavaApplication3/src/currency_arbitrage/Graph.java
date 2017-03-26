@@ -66,11 +66,11 @@ public class Graph {
             if (dist.get(u)+e.weight<dist.get(v))
               System.out.println("Graph contains negative weight cycle");
         }
-        printDistanceMap(dist, vertices);
+        printDistanceHashMap(dist, vertices);
     }
  
     // A utility function used to print the solution
-    void printDistanceMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
+    void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {
         System.out.println("Vertex Distance from Source");
         for (int i=0; i<V.size(); ++i)
