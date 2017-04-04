@@ -11,10 +11,19 @@ package currency_arbitrage;
  */
 public class Vertex {
     public Currency currency;
-
-    public Vertex(Currency currency) {
+    public String name;
+    public Vertex(){
+ 
+    }
+    public Vertex(Currency currency, String name) {
         super();
         this.currency = currency;
+        this.name=name;
     }
-
+    public Vertex getVertex(String name){
+        if(name == this.name){
+            return this;
+        }
+        else return null;
+    }
 }

@@ -39,7 +39,6 @@ public class Graph {
         }
        
         dist.put(src,0.0);
-        
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
         // have at-most |V| - 1 edges
@@ -53,11 +52,11 @@ public class Graph {
                 }
              } 
          }
- 
         // Step 3: check for negative-weight cycles.  The above
         // step guarantees shortest distances if graph doesn't
         // contain negative weight cycle. If we get a shorter
         //  path, then there is a cycle.
+        
         for (int k=0; k<edges.size(); ++k)
         {
             Edge e = graph.edges.get(k);
@@ -66,9 +65,11 @@ public class Graph {
             if (dist.get(u)+e.weight<dist.get(v))
               System.out.println("Graph contains negative weight cycle");
         }
+        
         printDistanceHashMap(dist, vertices);
+
     }
- 
+    
     // A utility function used to print the solution
     void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {
