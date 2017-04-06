@@ -26,7 +26,8 @@ public class Graph {
     // function also detects negative weight cycle
     void BellmanFord(Graph graph, Vertex source)
     {
-        Vertex src=source;
+        
+        Vertex src = source;
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
@@ -67,7 +68,16 @@ public class Graph {
         }
         
         printDistanceHashMap(dist, vertices);
-
+        
+    }
+    
+    Vertex findSource(String name, ArrayList<Vertex> vertices){
+        for( int i = 0; i<vertices.size();i++){
+            Vertex v= vertices.get(i);
+            if (v.name.equals(name))
+                return v;
+        }
+        return null;
     }
     
     // A utility function used to print the solution

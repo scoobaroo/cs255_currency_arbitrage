@@ -20,10 +20,5 @@ public class Vertex {
         this.currency = currency;
         this.name=name;
     }
-    public Vertex getVertex(String name){
-        if(name == this.name){
-            return this;
-        }
-        else return null;
-    }
+    
 }
