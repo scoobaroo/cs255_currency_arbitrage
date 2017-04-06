@@ -273,24 +273,23 @@ public class Currency_Arbitrage {
         edges.add(ppcusd);
                 
                
-        Graph graph;
-        graph = new Graph(currencies,edges);
         System.out.println("Before for loop");
         ArrayList<Edge> newEdges = new ArrayList<Edge>();
         //creating new edges for reversing directions of edges with new weights, sources, and destinations
-        for (int i = 0; i< graph.edges.size() ; i++){
+        for (int i = 0; i< edges.size() ; i++){
             System.out.println("Inside for loop 1");
-            newEdges.add(graph.edges.get(i));
-            Edge e = new Edge(graph.edges.get(i).dest,graph.edges.get(i).src,-graph.edges.get(i).weight);
+            newEdges.add(edges.get(i));
+            Edge e = new Edge(edges.get(i).dest,edges.get(i).src,-edges.get(i).weight);
             newEdges.add(e);
         }
         System.out.println("OUtside for loop");
+        Graph graph;
+        graph = new Graph(currencies,newEdges);
         
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter starting currency: ");
         String n = reader.next();
         Vertex src = graph.findSource(n,currencies);
-        
         graph.BellmanFord(graph, src);
     }
     

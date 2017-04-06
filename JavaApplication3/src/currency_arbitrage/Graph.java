@@ -36,7 +36,7 @@ public class Graph {
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
         for(i=0;i<vertices.size();++i){
-            dist.put(vertices.get(i),99999999.0);
+            dist.put(vertices.get(i),999.0);
         }
        
         dist.put(src,0.0);
@@ -45,9 +45,9 @@ public class Graph {
         // have at-most |V| - 1 edges
         for (i = 0; i < vertices.size() - 1; ++i) {
             for (j = 0; j < edges.size(); ++j) { //here i am calculating the shortest path
-                Edge e = graph.edges.get(j);
                 Vertex u = graph.edges.get(j).src;
                 Vertex v = graph.edges.get(j).dest;
+                Edge e = findEdge(u,v);
                 if (dist.get(u) + e.weight < dist.get(v)) {
                     dist.put(v, dist.get(u) + e.weight);
                 }
@@ -60,11 +60,20 @@ public class Graph {
         
         for (int k=0; k<edges.size(); ++k)
         {
-            Edge e = graph.edges.get(k);
             Vertex u = graph.edges.get(k).src;
             Vertex v = graph.edges.get(k).dest;
-            if (dist.get(u)+e.weight<dist.get(v))
+            Edge e = findEdge(u,v);
+            if (dist.get(u)+e.weight<dist.get(v)){
               System.out.println("Graph contains negative weight cycle");
+              System.out.println("Cycle contains:" + v.name+ " + " + u.name + " connected by weight "+e.weight);
+//              for(int z=0; z<edges.size();z++){
+//                  System.out.println("Vertex1 : "+u.name+" is connected "+v.name + " by weight: " +e.weight);
+//                  Edge edge = findEdge(u,v);
+//                  edge.src = e.dest;
+//                  Edge edge2 = findEdge(edge.src, e.dest);
+//                  System.out.println(v.name+"is connected to "+edge2.dest);
+//              }
+            }
         }
         
         printDistanceHashMap(dist, vertices);
@@ -78,6 +87,25 @@ public class Graph {
                 return v;
         }
         return null;
+    }
+    
+    Edge findEdge(Vertex src, Vertex dest){
+        for ( int i = 0; i < edges.size() ; ++i){
+            Edge e = edges.get(i);
+            if(e.src == src && e.dest== dest){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    ArrayList<Vertex> findVertices(Graph subset){
+        ArrayList<Vertex> set = new ArrayList<Vertex>();
+        for (int q= 0; q<subset.edges.size();q++){
+            set.add(edges.get(q).src);
+            set.add(edges.get(q).dest);
+            Vertex second = edges.get(q).dest;
+        }
     }
     
     // A utility function used to print the solution
