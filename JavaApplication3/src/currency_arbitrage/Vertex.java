@@ -5,6 +5,8 @@
  */
 package currency_arbitrage;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author suejanehan
@@ -12,6 +14,8 @@ package currency_arbitrage;
 public class Vertex {
     public Currency currency;
     public String name;
+    public Vertex predecessor;
+    ArrayList<Vertex> predecessors = new ArrayList<Vertex>();
     public Vertex(){
  
     }
@@ -19,6 +23,7 @@ public class Vertex {
         super();
         this.currency = currency;
         this.name=name;
+        this.predecessor = null;
     }
     
 }

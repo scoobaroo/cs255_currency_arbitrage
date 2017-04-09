@@ -32,6 +32,8 @@ public class Graph {
         vertices = graph.vertices;
         edges = graph.edges;
         HashMap<Vertex, Double> dist = new HashMap(vertices.size());
+        ArrayList<Vertex> preds = new ArrayList<Vertex>();
+        
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
@@ -50,6 +52,8 @@ public class Graph {
                 Edge e = findEdge(u,v);
                 if (dist.get(u) + e.weight < dist.get(v)) {
                     dist.put(v, dist.get(u) + e.weight);
+                    v.predecessor = u;
+                    preds.add(u);
                 }
              } 
          }
@@ -66,13 +70,13 @@ public class Graph {
             if (dist.get(u)+e.weight<dist.get(v)){
               System.out.println("Graph contains negative weight cycle");
               System.out.println("Cycle contains:" + v.name+ " + " + u.name + " connected by weight "+e.weight);
-//              for(int z=0; z<edges.size();z++){
-//                  System.out.println("Vertex1 : "+u.name+" is connected "+v.name + " by weight: " +e.weight);
-//                  Edge edge = findEdge(u,v);
-//                  edge.src = e.dest;
-//                  Edge edge2 = findEdge(edge.src, e.dest);
-//                  System.out.println(v.name+"is connected to "+edge2.dest);
-//              }
+              for (Vertex vertex : vertices){
+                  while(vertex.predecessor!=null){
+                    Vertex pred = vertex.predecessor;
+                    System.out.println(pred.name + "-->" + vertex.name);
+                    vertex = pred;
+                  }
+              }
             }
         }
         
@@ -101,11 +105,14 @@ public class Graph {
 
     ArrayList<Vertex> findVertices(Graph subset){
         ArrayList<Vertex> set = new ArrayList<Vertex>();
-        for (int q= 0; q<subset.edges.size();q++){
-            set.add(edges.get(q).src);
-            set.add(edges.get(q).dest);
-            Vertex second = edges.get(q).dest;
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        edges = subset.edges;
+        for (int q= 0; q< edges.size();q++){
+            Edge edge = edges.get(q);
+            set.add(edge.src);
+            set.add(edge.dest);
         }
+        return set;
     }
     
     // A utility function used to print the solution
