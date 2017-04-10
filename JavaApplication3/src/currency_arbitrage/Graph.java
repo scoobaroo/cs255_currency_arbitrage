@@ -31,14 +31,12 @@ public class Graph {
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-        HashMap<Vertex, Double> dist = new HashMap(vertices.size());
-        ArrayList<Vertex> preds = new ArrayList<Vertex>();
-        
+        HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
         for(i=0;i<vertices.size();++i){
-            dist.put(vertices.get(i),999.0);
+            dist.put(vertices.get(i),99999.0);
         }
        
         dist.put(src,0.0);
@@ -47,13 +45,12 @@ public class Graph {
         // have at-most |V| - 1 edges
         for (i = 0; i < vertices.size() - 1; ++i) {
             for (j = 0; j < edges.size(); ++j) { //here i am calculating the shortest path
-                Vertex u = graph.edges.get(j).src;
-                Vertex v = graph.edges.get(j).dest;
-                Edge e = findEdge(u,v);
+                Vertex u = edges.get(j).src;
+                Vertex v = edges.get(j).dest;
+                Edge e = edges.get(j);
                 if (dist.get(u) + e.weight < dist.get(v)) {
                     dist.put(v, dist.get(u) + e.weight);
                     v.predecessor = u;
-                    preds.add(u);
                 }
              } 
          }
@@ -64,18 +61,27 @@ public class Graph {
         
         for (int k=0; k<edges.size(); ++k)
         {
-            Vertex u = graph.edges.get(k).src;
-            Vertex v = graph.edges.get(k).dest;
-            Edge e = findEdge(u,v);
+            Vertex u = edges.get(k).src;
+            Vertex v = edges.get(k).dest;
+            Edge e = edges.get(k);
             if (dist.get(u)+e.weight<dist.get(v)){
               System.out.println("Graph contains negative weight cycle");
               System.out.println("Cycle contains:" + v.name+ " + " + u.name + " connected by weight "+e.weight);
-              for (Vertex vertex : vertices){
-                  while(vertex.predecessor!=null){
-                    Vertex pred = vertex.predecessor;
-                    System.out.println(pred.name + "-->" + vertex.name);
-                    vertex = pred;
-                  }
+              ArrayList<Vertex> cycle = new ArrayList<>();
+              cycle.add(u);
+              Boolean bool= true;
+              System.out.println(u.name);
+              while(bool){
+                Vertex pred = u.predecessor;
+                System.out.print(pred.name+"--->");
+                u = pred;
+                cycle.add(pred);
+                for(int b = 1; b<cycle.size(); ++b){
+                    Vertex vertex = cycle.get(b);
+                    if(vertex.name.equals(u.name)){
+                      bool=false;
+                    }
+                }
               }
             }
         }
@@ -94,7 +100,7 @@ public class Graph {
     }
     
     Edge findEdge(Vertex src, Vertex dest){
-        for ( int i = 0; i < edges.size() ; ++i){
+        for ( int i = 0; i < edges.size(); ++i){
             Edge e = edges.get(i);
             if(e.src == src && e.dest== dest){
                 return e;
@@ -102,24 +108,11 @@ public class Graph {
         }
         return null;
     }
-
-    ArrayList<Vertex> findVertices(Graph subset){
-        ArrayList<Vertex> set = new ArrayList<Vertex>();
-        ArrayList<Edge> edges = new ArrayList<Edge>();
-        edges = subset.edges;
-        for (int q= 0; q< edges.size();q++){
-            Edge edge = edges.get(q);
-            set.add(edge.src);
-            set.add(edge.dest);
-        }
-        return set;
-    }
-    
     // A utility function used to print the solution
     void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {
         System.out.println("Vertex Distance from Source");
         for (int i=0; i<V.size(); ++i)
-            System.out.println(i+"\t\t"+distance.get(V.get(i)));
+            System.out.println(V.get(i).name+"\t\t"+distance.get(V.get(i)));
     }
 }

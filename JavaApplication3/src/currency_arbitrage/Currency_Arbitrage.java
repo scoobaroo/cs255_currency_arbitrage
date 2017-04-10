@@ -188,9 +188,6 @@ public class Currency_Arbitrage {
         Double ETHRUR = -Math.log(ETHRUR1);
         Double ETHEUR = -Math.log(ETHEUR1);
         Double ETHLTC = -Math.log(ETHLTC1);
-        //checking if log(1/x) = -log(x)
-        System.out.println(LTCBTC);
-        System.out.println(Math.log(1/LTCBTC1));
         //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC, "BTC");
         Vertex USD =new Vertex(Currency.USD, "USD");
@@ -271,20 +268,16 @@ public class Currency_Arbitrage {
         edges.add(etheur);
         edges.add(ethltc);
         edges.add(ppcusd);
-                
-               
-        System.out.println("Before for loop");
-        ArrayList<Edge> newEdges = new ArrayList<Edge>();
+              
+        ArrayList<Edge> newEdges = new ArrayList<>();
         //creating new edges for reversing directions of edges with new weights, sources, and destinations
         for (int i = 0; i< edges.size() ; i++){
-            System.out.println("Inside for loop 1");
             newEdges.add(edges.get(i));
             Edge e = new Edge(edges.get(i).dest,edges.get(i).src,-edges.get(i).weight);
             newEdges.add(e);
         }
-        System.out.println("OUtside for loop");
-        Graph graph;
-        graph = new Graph(currencies,newEdges);
+
+        Graph graph = new Graph(currencies,newEdges);
         
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter starting currency: ");

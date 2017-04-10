@@ -14,8 +14,7 @@ import java.util.ArrayList;
 public class Vertex {
     public Currency currency;
     public String name;
-    public Vertex predecessor;
-    ArrayList<Vertex> predecessors = new ArrayList<Vertex>();
+    public Vertex predecessor=null;
     public Vertex(){
  
     }
