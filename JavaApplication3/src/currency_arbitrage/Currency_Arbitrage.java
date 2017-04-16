@@ -187,12 +187,7 @@ public class Currency_Arbitrage {
         Double ETHUSD = -Math.log(ETHUSD1);
         Double ETHRUR = -Math.log(ETHRUR1);
         Double ETHEUR = -Math.log(ETHEUR1);
-        
         Double ETHLTC = -Math.log(ETHLTC1);
-        System.out.println("WEIGHT CHECK");
-        System.out.println(ETHLTC);
-        Double LTCETH = -Math.log(1/ETHLTC1);
-        System.out.println(LTCETH);
         //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC, "BTC");
         Vertex USD =new Vertex(Currency.USD, "USD");

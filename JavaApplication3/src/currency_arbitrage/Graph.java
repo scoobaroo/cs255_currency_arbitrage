@@ -5,14 +5,9 @@
  */
 package currency_arbitrage;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -50,7 +45,7 @@ public class Graph {
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
         // have at-most |V| - 1 edges
-        for (i = 0; i < vertices.size() - 1; i++) {
+        for (i = 0; i < vertices.size() -1 ; i++) {
             for (j = 0; j < edges.size(); j++) { //here i am calculating the shortest path
                 Vertex u = edges.get(j).src;
                 Vertex v = edges.get(j).dest;
@@ -65,44 +60,42 @@ public class Graph {
         // step guarantees shortest distances if graph doesn't
         // contain negative weight cycle. If we get a shorter
         //  path, then there is a cycle.
+        int totalCycles = 0;
         for (int k=0; k<edges.size(); k++)
         {
             Vertex u = edges.get(k).src;
             Vertex v = edges.get(k).dest;
             Edge e = edges.get(k);
             if (dist.get(u)+e.weight<dist.get(v)){
-              System.out.println("\n======================================");
-              System.out.println("\nGraph contains negative weight cycle");
-              System.out.println("Cycle contains:" + u.name+ " connected to " + v.name + " by weight "+e.weight);
+              totalCycles +=1;
+              System.out.println("\n=================================================================================");
+              System.out.println("Graph contains negative weight cycle");
+              System.out.println("Cycle starts with " + v.name+ " connected to " + u.name);
               path(u,v);
-              Set cycle = new HashSet<>();
+              LinkedHashSet cycle = new LinkedHashSet<>();
               while(cycle.add(v)){
                   v=v.predecessor;
               }
               printCycle(cycle);
             }
         }
+        System.out.println("The number of negative cycles, or arbitrage opportunities detected were :"+totalCycles);
         printDistanceHashMap(dist, vertices);
     }
     
     void path(Vertex u, Vertex v){
-        System.out.println("\n INSIDE PATH FUNCTION");
-        Vertex pred = v.predecessor;
-        Set cycle1 = new HashSet<>();
+        System.out.println("INSIDE PATH FUNCTION");
+        LinkedHashSet cycle = new LinkedHashSet<>();
         ArrayList<Vertex> cycleArrayList = new ArrayList<>();
-        System.out.println("Checking v's name "+v.name);
-        System.out.println("Checking u's name "+ u.name);
-        cycle1.add(v);
-        cycleArrayList.add(v);
-        while(cycle1.add(pred)){
-            cycleArrayList.add(pred);
-            pred = pred.predecessor;          
+        while(cycle.add(v)){
+            cycleArrayList.add(v);
+            v = v.predecessor;          
         }
         Double begin = 1.0;
         Double cycleWeight = 0.0;
         for(int k=0; k<cycleArrayList.size(); k++){
             Vertex v1 = cycleArrayList.get(k);
-            System.out.println("YOOOHOOOOO "+v1.name);
+            System.out.print(v1.name+"--->");
             if(k<cycleArrayList.size()-1){
                 Vertex v2 = cycleArrayList.get(k+1);
                 Edge edge = findEdge(v1,v2);
@@ -113,51 +106,19 @@ public class Graph {
         Edge lastEdge = findEdge(cycleArrayList.get(cycleArrayList.size()-1),cycleArrayList.get(0));
         cycleWeight += lastEdge.weight;
         begin *= Math.exp(lastEdge.weight);
-        System.out.println("HERE ARE THE RESULTS!!!"+ Math.exp(cycleWeight) + "  " + begin);
-        System.out.println("\nThere is a negative cycle Path from " + u.name +" to "+ v.name);
-        System.out.println("\nStarting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
-//        System.out.print(v.name+"<---");
-//        System.out.print(v.predecessor.name+"<---");
-//        System.out.print(v.predecessor.predecessor.name+"<---");
-//        System.out.print(v.predecessor.predecessor.predecessor.name+"<---");
-//        System.out.print(v.predecessor.predecessor.predecessor.predecessor.name+"<---");
-//        System.out.print(curr.name+"---->");
-//        Double pathWeight = 0.0;
-//        while(true) {
-//            curr=pred;
-//            pred = curr.predecessor;
-//            Edge e = findEdge(curr,pred);
-//            System.out.println(e.weight);
-//            pathWeight = pathWeight + e.weight;
-//            System.out.println("path from" +curr.name +" to " +"pred.name " +"connected by weight "+e.weight);
-//            System.out.print(pred.name+"--->");
-//            if(pred.name.equals(u.name)){
-//                System.out.print(u.name);
-//                break;
-//            }
-//        }
+        System.out.println(Math.exp(cycleWeight));
+        System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
     }
     
-    void printCycle(Set<Vertex> c){
-        System.out.println("we are printing the contents of the Set<Vertex> cycle");
-        Iterator cycleIterator = c.iterator();
-        while(cycleIterator.hasNext()){
-            Vertex v = (Vertex) cycleIterator.next();
+    void printCycle(LinkedHashSet<Vertex> c){
+        System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
+        c.forEach((v) -> {
             System.out.print(v.name + "-->");
-        }
-    }
-    
-    Vertex findSource(String name, ArrayList<Vertex> vertices){
-        for( int i = 0; i<vertices.size();i++){
-            Vertex v= vertices.get(i);
-            if (v.name.equals(name))
-                return v;
-        }
-        return null;
+        });
     }
     
     Edge findEdge(Vertex src, Vertex dest){
-        for ( int i = 0; i < edges.size(); ++i){
+        for ( int i = 0; i < edges.size(); i++){
             Edge e = edges.get(i);
             if(e.src == src && e.dest== dest){
                 return e;
@@ -165,6 +126,16 @@ public class Graph {
         }
         return null;
     }
+    
+    Vertex findSource(String name, ArrayList<Vertex> vertices){
+        for( int i = 0; i<vertices.size();i++){
+            Vertex v= vertices.get(i);
+            if (v.name.equalsIgnoreCase(name))
+                return v;
+        }
+        return null;
+    }
+    
     // A utility function used to print the solution
     void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {   System.out.println("\n****************************");
