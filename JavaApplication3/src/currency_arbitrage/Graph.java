@@ -79,7 +79,7 @@ public class Graph {
               printCycle(cycle);
             }
         }
-        System.out.println("The number of negative cycles, or arbitrage opportunities detected were :"+totalCycles);
+        System.out.println("\nThe number of negative cycles, or arbitrage opportunities detected were :"+totalCycles);
         printDistanceHashMap(dist, vertices);
     }
     
@@ -104,8 +104,10 @@ public class Graph {
             }
         }
         Edge lastEdge = findEdge(cycleArrayList.get(cycleArrayList.size()-1),cycleArrayList.get(0));
-        cycleWeight += lastEdge.weight;
-        begin *= Math.exp(lastEdge.weight);
+        if(lastEdge!=null){
+            cycleWeight += lastEdge.weight;
+            begin *= Math.exp(lastEdge.weight);
+        }
         System.out.println(Math.exp(cycleWeight));
         System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
     }
@@ -113,7 +115,7 @@ public class Graph {
     void printCycle(LinkedHashSet<Vertex> c){
         System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
         c.forEach((v) -> {
-            System.out.print(v.name + "-->");
+            System.out.print(v.name + "--->");
         });
     }
     
