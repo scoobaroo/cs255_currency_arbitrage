@@ -187,7 +187,12 @@ public class Currency_Arbitrage {
         Double ETHUSD = -Math.log(ETHUSD1);
         Double ETHRUR = -Math.log(ETHRUR1);
         Double ETHEUR = -Math.log(ETHEUR1);
+        
         Double ETHLTC = -Math.log(ETHLTC1);
+        System.out.println("WEIGHT CHECK");
+        System.out.println(ETHLTC);
+        Double LTCETH = -Math.log(1/ETHLTC1);
+        System.out.println(LTCETH);
         //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC, "BTC");
         Vertex USD =new Vertex(Currency.USD, "USD");
@@ -199,6 +204,29 @@ public class Currency_Arbitrage {
         Vertex PPC =new Vertex(Currency.PPC, "PPC");
         Vertex DSH =new Vertex(Currency.DSH, "DSH");
         Vertex ETH =new Vertex(Currency.ETH, "ETH");
+        
+//        ArrayList<Edge> testEdges = new ArrayList<>();
+//        ArrayList<Vertex> testVertices = new ArrayList<>();
+//        testVertices.add(BTC);
+//        testVertices.add(LTC);
+//        testVertices.add(USD);
+//        testVertices.add(RUR);
+//        testVertices.add(EUR);
+//        Edge zero = new Edge(EUR,BTC, 5);
+//        Edge one = new Edge(BTC,USD, -7);
+//        Edge two = new Edge(USD,LTC, -4);
+//        Edge three = new Edge(LTC,BTC, -3);
+//        Edge four = new Edge(USD,EUR, 3);
+//        Edge five = new Edge(USD,RUR, -5);
+//        Edge six = new Edge(RUR,BTC, -3);
+//        testEdges.add(one);
+//        testEdges.add(two);
+//        testEdges.add(three);
+//        testEdges.add(zero);
+//        testEdges.add(four);
+//        testEdges.add(five);
+//        testEdges.add(six);
+//        Graph testGraph = new Graph(testVertices,testEdges);
         //creating ArrayList of vertexes to use in bellman ford
         ArrayList<Vertex> currencies = new ArrayList<>();
         currencies.add(BTC); //0
@@ -273,7 +301,7 @@ public class Currency_Arbitrage {
         //creating new edges for reversing directions of edges with new weights, sources, and destinations
         for (int i = 0; i< edges.size() ; i++){
             newEdges.add(edges.get(i));
-            Edge e = new Edge(edges.get(i).dest,edges.get(i).src,-edges.get(i).weight);
+            Edge e = new Edge(edges.get(i).dest,edges.get(i).src, -edges.get(i).weight);
             newEdges.add(e);
         }
 
@@ -282,8 +310,12 @@ public class Currency_Arbitrage {
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter starting currency: ");
         String n = reader.next();
-        Vertex src = graph.findSource(n,currencies);
+        Vertex src = graph.findSource(n,graph.vertices);
         graph.BellmanFord(graph, src);
+///**********
+//        Vertex src = testGraph.findSource(n,testGraph.vertices);
+//        testGraph.BellmanFord(testGraph, src);
+/************/
     }
     
 }
