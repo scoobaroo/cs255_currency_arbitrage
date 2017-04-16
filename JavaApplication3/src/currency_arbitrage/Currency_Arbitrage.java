@@ -297,15 +297,15 @@ public class Currency_Arbitrage {
         edges.add(ethltc);
         edges.add(ppcusd);
               
-        ArrayList<Edge> newEdges = new ArrayList<>();
+        ArrayList<Edge> allEdges = new ArrayList<>();
         //creating new edges for reversing directions of edges with new weights, sources, and destinations
         for (int i = 0; i< edges.size() ; i++){
-            newEdges.add(edges.get(i));
+            allEdges.add(edges.get(i));
             Edge e = new Edge(edges.get(i).dest,edges.get(i).src, -edges.get(i).weight);
-            newEdges.add(e);
+            allEdges.add(e);
         }
 
-        Graph graph = new Graph(currencies,newEdges);
+        Graph graph = new Graph(currencies,allEdges);
         
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter starting currency: ");

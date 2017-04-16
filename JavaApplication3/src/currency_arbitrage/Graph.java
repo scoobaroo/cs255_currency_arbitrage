@@ -5,10 +5,13 @@
  */
 package currency_arbitrage;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 /**
@@ -62,7 +65,6 @@ public class Graph {
         // step guarantees shortest distances if graph doesn't
         // contain negative weight cycle. If we get a shorter
         //  path, then there is a cycle.
-        Set outsideCycle = new HashSet<Vertex>();
         for (int k=0; k<edges.size(); k++)
         {
             Vertex u = edges.get(k).src;
@@ -72,48 +74,48 @@ public class Graph {
               System.out.println("\n======================================");
               System.out.println("\nGraph contains negative weight cycle");
               System.out.println("Cycle contains:" + u.name+ " connected to " + v.name + " by weight "+e.weight);
-              System.out.println("But there is a negative cycle so the actual weight is actually even more negative");
-              System.out.println("Distance in hashtable for Vertex v:"+dist.get(v));
-              System.out.println("Distance in hashtable for Vertex u:"+dist.get(u));
               path(u,v);
               Set cycle = new HashSet<>();
               while(cycle.add(v)){
                   v=v.predecessor;
               }
               printCycle(cycle);
-              
-              outsideCycle = cycle;
             }
         }
-        
         printDistanceHashMap(dist, vertices);
-        
     }
     
     void path(Vertex u, Vertex v){
-        System.out.println("\n we are inside path function now");
-        Vertex curr = v;
+        System.out.println("\n INSIDE PATH FUNCTION");
         Vertex pred = v.predecessor;
         Set cycle1 = new HashSet<>();
+        ArrayList<Vertex> cycleArrayList = new ArrayList<>();
+        System.out.println("Checking v's name "+v.name);
+        System.out.println("Checking u's name "+ u.name);
         cycle1.add(v);
+        cycleArrayList.add(v);
         while(cycle1.add(pred)){
-            cycle1.add(pred);
+            cycleArrayList.add(pred);
             pred = pred.predecessor;          
         }
-        System.out.println("\nPath from " + v.name +" to "+ u.name);
-        Iterator cycleIterator = cycle1.iterator();
+        Double begin = 1.0;
         Double cycleWeight = 0.0;
-        while(cycleIterator.hasNext()){
-            Vertex vert = (Vertex) cycleIterator.next();
-            Vertex vert2 = vert.predecessor;
-            Edge edge = findEdge(vert2,vert);
-            cycleWeight = cycleWeight + edge.weight;
-            System.out.print( vert.name + "-->by weight " + edge.weight + "-->"+vert2.name + " ");
+        for(int k=0; k<cycleArrayList.size(); k++){
+            Vertex v1 = cycleArrayList.get(k);
+            System.out.println("YOOOHOOOOO "+v1.name);
+            if(k<cycleArrayList.size()-1){
+                Vertex v2 = cycleArrayList.get(k+1);
+                Edge edge = findEdge(v1,v2);
+                cycleWeight += edge.weight;
+                begin *= Math.exp(edge.weight);
+            }
         }
-        Edge finalEdge = findEdge(v,u);
-        cycleWeight +=finalEdge.weight;
-        System.out.println("\nTotal weight for cycle is"+ cycleWeight);
-        System.out.println("Starting with 1 " +v.name+ " we can end up with " + 1/Math.exp(cycleWeight) +" "+v.name +" by following the negative cycle");
+        Edge lastEdge = findEdge(cycleArrayList.get(cycleArrayList.size()-1),cycleArrayList.get(0));
+        cycleWeight += lastEdge.weight;
+        begin *= Math.exp(lastEdge.weight);
+        System.out.println("HERE ARE THE RESULTS!!!"+ Math.exp(cycleWeight) + "  " + begin);
+        System.out.println("\nThere is a negative cycle Path from " + u.name +" to "+ v.name);
+        System.out.println("\nStarting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
 //        System.out.print(v.name+"<---");
 //        System.out.print(v.predecessor.name+"<---");
 //        System.out.print(v.predecessor.predecessor.name+"<---");
@@ -138,9 +140,9 @@ public class Graph {
     
     void printCycle(Set<Vertex> c){
         System.out.println("we are printing the contents of the Set<Vertex> cycle");
-        Iterator cycleIterator2 = c.iterator();
-        while(cycleIterator2.hasNext()){
-            Vertex v = (Vertex) cycleIterator2.next();
+        Iterator cycleIterator = c.iterator();
+        while(cycleIterator.hasNext()){
+            Vertex v = (Vertex) cycleIterator.next();
             System.out.print(v.name + "-->");
         }
     }
