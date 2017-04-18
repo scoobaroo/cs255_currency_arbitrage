@@ -107,9 +107,11 @@ public class Graph {
         if(lastEdge!=null){
             cycleWeight += lastEdge.weight;
             begin *= Math.exp(lastEdge.weight);
-        }
-        System.out.println(Math.exp(cycleWeight));
-        System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
+            System.out.println(Math.exp(cycleWeight));
+            System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
+    
+        } else
+            System.out.println("\nCouldn't find final edge");
     }
     
     void printCycle(LinkedHashSet<Vertex> c){
