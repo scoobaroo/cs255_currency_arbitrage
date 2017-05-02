@@ -28,19 +28,19 @@ public class Graph {
     // function also detects negative weight cycle
     void BellmanFord(Graph graph, Vertex source)
     {
-        
+
         Vertex src = source;
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-        HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
- 
+        HashMap<Vertex, Double> dist = new HashMap(vertices.size());
+
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
         for(i=0;i<vertices.size();i++){
             dist.put(vertices.get(i),inf);
         }
-       
+
         dist.put(src,0.0);
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
@@ -54,7 +54,7 @@ public class Graph {
                     dist.put(v, dist.get(u) + e.weight);
                     v.predecessor = u;
                 }
-             } 
+             }
          }
         // Step 3: check for negative-weight cycles.  The above
         // step guarantees shortest distances if graph doesn't
@@ -82,14 +82,14 @@ public class Graph {
         System.out.println("\nThe number of negative cycles, or arbitrage opportunities detected were :"+totalCycles);
         printDistanceHashMap(dist, vertices);
     }
-    
+
     void path(Vertex u, Vertex v){
         System.out.println("INSIDE PATH FUNCTION");
         LinkedHashSet cycle = new LinkedHashSet<>();
         ArrayList<Vertex> cycleArrayList = new ArrayList<>();
         while(cycle.add(v)){
             cycleArrayList.add(v);
-            v = v.predecessor;          
+            v = v.predecessor;
         }
         Double begin = 1.0;
         Double cycleWeight = 0.0;
@@ -109,18 +109,18 @@ public class Graph {
             begin *= Math.exp(lastEdge.weight);
             System.out.println(Math.exp(cycleWeight));
             System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
-    
+
         } else
             System.out.println("\nCouldn't find final edge");
     }
-    
+
     void printCycle(LinkedHashSet<Vertex> c){
         System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
         c.forEach((v) -> {
             System.out.print(v.name + "--->");
         });
     }
-    
+
     Edge findEdge(Vertex src, Vertex dest){
         for ( int i = 0; i < edges.size(); i++){
             Edge e = edges.get(i);
@@ -130,7 +130,7 @@ public class Graph {
         }
         return null;
     }
-    
+
     Vertex findSource(String name, ArrayList<Vertex> vertices){
         for( int i = 0; i<vertices.size();i++){
             Vertex v= vertices.get(i);
@@ -139,7 +139,7 @@ public class Graph {
         }
         return null;
     }
-    
+
     // A utility function used to print the solution
     void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
     {   System.out.println("\n****************************");

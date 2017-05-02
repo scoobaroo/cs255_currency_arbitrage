@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package currency_arbitrage;
 import java.util.*;
 import java.util.ArrayList;
@@ -25,13 +20,25 @@ import javax.crypto.spec.SecretKeySpec;
 import org.json.*;
 import com.sun.grizzly.util.*; 
 import static java.lang.Math.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
-/**
- *
- * @author suejanehan
- */
+import java.net.*;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 public class Currency_Arbitrage {
-
+    	private static ServerSocket serverSocket;
+	private static Socket clientSocket;
+	private static BufferedReader bufferedReader;
+	private static String inputLine;
    private static long _nonce;
    
    // Create a unixtime nonce for the new API.
@@ -131,7 +138,7 @@ public class Currency_Arbitrage {
 
 	return null;  // The request failed.
     } 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ScriptException, ScriptException, ScriptException, ScriptException, IOException {
         // original exchange rates
         Double BTCUSD1 = 931.809;
         Double LTCBTC1 = 0.00437;
@@ -307,11 +314,29 @@ public class Currency_Arbitrage {
         String n = reader.next();
         Vertex src = graph.findSource(n,graph.vertices);
         graph.BellmanFord(graph, src);
-///**********
-//        Vertex src = testGraph.findSource(n,testGraph.vertices);
-//        testGraph.BellmanFord(testGraph, src);
-/************/
+        String inputLine= null;
+        String totalInputLine = null;
+        // Wait for client to connect on 63400
+        try
+        {
+                serverSocket = new ServerSocket(3030);
+                System.out.println("Just created a port at 3030");
+                clientSocket = serverSocket.accept();
+                // Create a reader
+                bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                // Get the client message
+                while((inputLine = bufferedReader.readLine()) != null){
+                      System.out.println(inputLine.getClass());
+                      totalInputLine += inputLine;
+                }
+        }
+        catch(IOException e)
+        {
+                System.out.println(e);
+        }
+//        ScriptEngine se = new ScriptEngineManager().getEngineByName("JavaScript");
+//        se.eval("print(inputLine)");
+        System.out.println(totalInputLine);
     }
-    
 }
 
