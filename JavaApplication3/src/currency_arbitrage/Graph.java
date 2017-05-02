@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package currency_arbitrage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -15,6 +11,7 @@ import java.util.HashMap;
 public class Graph {
     public ArrayList<Vertex> vertices;
     public ArrayList<Edge> edges;
+    double inf = Double.POSITIVE_INFINITY;
     public Graph(ArrayList<Vertex> vertices, ArrayList<Edge> edges) {
         super();
         this.vertices = vertices;
@@ -26,29 +23,31 @@ public class Graph {
     // function also detects negative weight cycle
     void BellmanFord(Graph graph, Vertex source)
     {
-        Vertex src=source;
+        
+        Vertex src = source;
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-        HashMap<Vertex, Double> dist = new HashMap(vertices.size());
+        HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
-        for(i=0;i<vertices.size();++i){
-            dist.put(vertices.get(i),99999999.0);
+        for(i=0;i<vertices.size();i++){
+            dist.put(vertices.get(i),inf);
         }
        
         dist.put(src,0.0);
         // Step 2: Relax all edges |V| - 1 times. A simple
         // shortest path from src to any other vertex can
         // have at-most |V| - 1 edges
-        for (i = 0; i < vertices.size() - 1; ++i) {
-            for (j = 0; j < edges.size(); ++j) { //here i am calculating the shortest path
-                Edge e = graph.edges.get(j);
-                Vertex u = graph.edges.get(j).src;
-                Vertex v = graph.edges.get(j).dest;
+        for (i = 0; i < vertices.size() -1 ; i++) {
+            for (j = 0; j < edges.size(); j++) { //here i am calculating the shortest path
+                Vertex u = edges.get(j).src;
+                Vertex v = edges.get(j).dest;
+                Edge e = edges.get(j);
                 if (dist.get(u) + e.weight < dist.get(v)) {
                     dist.put(v, dist.get(u) + e.weight);
+                    v.predecessor = u;
                 }
              } 
          }
@@ -56,25 +55,90 @@ public class Graph {
         // step guarantees shortest distances if graph doesn't
         // contain negative weight cycle. If we get a shorter
         //  path, then there is a cycle.
-        
-        for (int k=0; k<edges.size(); ++k)
+        int totalCycles = 0;
+        for (int k=0; k<edges.size(); k++)
         {
-            Edge e = graph.edges.get(k);
-            Vertex u = graph.edges.get(k).src;
-            Vertex v = graph.edges.get(k).dest;
-            if (dist.get(u)+e.weight<dist.get(v))
+            Vertex u = edges.get(k).src;
+            Vertex v = edges.get(k).dest;
+            Edge e = edges.get(k);
+            if (dist.get(u)+e.weight<dist.get(v)){
+              totalCycles +=1;
+              System.out.println("\n=================================================================================");
               System.out.println("Graph contains negative weight cycle");
+              System.out.println("Cycle starts with " + v.name+ " connected to " + u.name);
+              path(u,v);
+              LinkedHashSet cycle = new LinkedHashSet<>();
+              while(cycle.add(v)){
+                  v=v.predecessor;
+              }
+              printCycle(cycle);
+            }
         }
-        
+        System.out.println("\nThe number of negative cycles, or arbitrage opportunities detected were :"+totalCycles);
         printDistanceHashMap(dist, vertices);
-
+    }
+    
+    void path(Vertex u, Vertex v){
+        System.out.println("INSIDE PATH FUNCTION");
+        LinkedHashSet cycle = new LinkedHashSet<>();
+        ArrayList<Vertex> cycleArrayList = new ArrayList<>();
+        while(cycle.add(v)){
+            cycleArrayList.add(v);
+            v = v.predecessor;          
+        }
+        Double begin = 1.0;
+        Double cycleWeight = 0.0;
+        for(int k=0; k<cycleArrayList.size(); k++){
+            Vertex v1 = cycleArrayList.get(k);
+            System.out.print(v1.name+"--->");
+            if(k<cycleArrayList.size()-1){
+                Vertex v2 = cycleArrayList.get(k+1);
+                Edge edge = findEdge(v1,v2);
+                cycleWeight += edge.weight;
+                begin *= Math.exp(edge.weight);
+            }
+        }
+        Edge lastEdge = findEdge(cycleArrayList.get(cycleArrayList.size()-1),cycleArrayList.get(0));
+        if(lastEdge!=null){
+            cycleWeight += lastEdge.weight;
+            begin *= Math.exp(lastEdge.weight);
+        }
+        System.out.println(Math.exp(cycleWeight));
+        System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
+    }
+    
+    void printCycle(LinkedHashSet<Vertex> c){
+        System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
+        
+        for(Vertex v : c) {
+        	System.out.print(v.name + "--->");
+        }
+    }
+    
+    Edge findEdge(Vertex src, Vertex dest){
+        for ( int i = 0; i < edges.size(); i++){
+            Edge e = edges.get(i);
+            if(e.src == src && e.dest== dest){
+                return e;
+            }
+        }
+        return null;
+    }
+    
+    Vertex findSource(String name, ArrayList<Vertex> vertices){
+        for( int i = 0; i<vertices.size();i++){
+            Vertex v= vertices.get(i);
+            if (v.name.equalsIgnoreCase(name))
+                return v;
+        }
+        return null;
     }
     
     // A utility function used to print the solution
     void printDistanceHashMap(HashMap<Vertex, Double> distance, ArrayList<Vertex> V)
-    {
+    {   System.out.println("\n****************************");
         System.out.println("Vertex Distance from Source");
         for (int i=0; i<V.size(); ++i)
-            System.out.println(i+"\t\t"+distance.get(V.get(i)));
+            System.out.println(V.get(i).name+"\t\t"+distance.get(V.get(i)));
     }
 }
