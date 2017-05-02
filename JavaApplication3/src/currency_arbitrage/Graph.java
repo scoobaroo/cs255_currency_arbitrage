@@ -102,17 +102,22 @@ public class Graph {
         if(lastEdge!=null){
             cycleWeight += lastEdge.weight;
             begin *= Math.exp(lastEdge.weight);
-        }
-        System.out.println(Math.exp(cycleWeight));
-        System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
+
+            System.out.println(Math.exp(cycleWeight));
+            System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
+    
+        } else
+            System.out.println("\nCouldn't find final edge");
     }
     
     void printCycle(LinkedHashSet<Vertex> c){
         System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
-        
+
+        // switch to for loop for readability.
         for(Vertex v : c) {
         	System.out.print(v.name + "--->");
         }
+
     }
     
     Edge findEdge(Vertex src, Vertex dest){

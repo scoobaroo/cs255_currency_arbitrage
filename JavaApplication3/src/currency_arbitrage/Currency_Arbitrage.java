@@ -93,7 +93,7 @@ public class Currency_Arbitrage {
     	
     	//get new exchange rates
     	getExchangeRates();
-       
+
         //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC, "BTC");
         Vertex USD =new Vertex(Currency.USD, "USD");
@@ -183,7 +183,9 @@ public class Currency_Arbitrage {
             allEdges.add(edges.get(i));
             Edge e = new Edge(edges.get(i).dest,edges.get(i).src, -edges.get(i).weight);
             allEdges.add(e);
+
             //System.out.println(edges.get(i).weight);
+
         }
 
         Graph graph = new Graph(currencies,allEdges);
@@ -193,6 +195,7 @@ public class Currency_Arbitrage {
         String n = reader.next();
         Vertex src = graph.findSource(n,graph.vertices);
         graph.BellmanFord(graph, src);
+
 
     }
     
