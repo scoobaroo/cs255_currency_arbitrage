@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package currency_arbitrage;
 
 import java.util.ArrayList;
@@ -107,6 +102,7 @@ public class Graph {
         if(lastEdge!=null){
             cycleWeight += lastEdge.weight;
             begin *= Math.exp(lastEdge.weight);
+
             System.out.println(Math.exp(cycleWeight));
             System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
     
@@ -116,9 +112,12 @@ public class Graph {
     
     void printCycle(LinkedHashSet<Vertex> c){
         System.out.println("we are printing the contents of the LinkedHashSet<Vertex> cycle");
-        c.forEach((v) -> {
-            System.out.print(v.name + "--->");
-        });
+
+        // switch to for loop for readability.
+        for(Vertex v : c) {
+        	System.out.print(v.name + "--->");
+        }
+
     }
     
     Edge findEdge(Vertex src, Vertex dest){

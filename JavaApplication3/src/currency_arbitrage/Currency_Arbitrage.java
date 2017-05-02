@@ -23,6 +23,11 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.json.*;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.sun.grizzly.util.*; 
 import static java.lang.Math.*;
 
@@ -31,163 +36,64 @@ import static java.lang.Math.*;
  * @author suejanehan
  */
 public class Currency_Arbitrage {
+	private static String [] pairings = {
+			"btc_usd",
+			"ltc_btc",
+			"btc_rur",
+			"btc_eur",
+			"ltc_usd",
+			"ltc_rur",
+			"ltc_eur",
+			"nmc_btc",
+			"nmc_usd",
+			"nvc_btc",
+			"nvc_usd",
+			"usd_rur",
+			"eur_usd",
+			"eur_rur",
+			"ppc_btc",
+			"ppc_usd",
+			"dsh_btc",
+			"dsh_usd",
+			"dsh_rur",
+			"dsh_eur",
+			"dsh_ltc",
+			"dsh_eth",
+			"eth_btc",
+			"eth_usd",
+			"eth_rur",
+			"eth_eur",
+			"eth_ltc"
+			};
+	private static HashMap<String,Double> exchangeRate;
+	private static HashMap<String,Double> negExchangeRate;
 
-   private static long _nonce;
-   
-   // Create a unixtime nonce for the new API.
-   _nonce = ( TradeApp.getApp().getCurrentGMTTimeMicros() / 1000000);
-
-    /**
-     * Execute a authenticated query on btc-e.
-     *
-     * @param method The method to execute.
-     * @param arguments The arguments to pass to the server.
-     *
-     * @return The returned data as JSON or null, if the request failed.
-     *
-     * @see http://pastebin.com/K25Nk2Sv
-     */
-    private final JSONObject authenticatedHTTPRequest( String method, Map<String, String> arguments) {
-	HashMap<String, String> headerLines = new HashMap<String, String>();  // Create a new map for the header lines.
-	Mac mac;
-	SecretKeySpec key = null;
-
-	if( arguments == null) {  // If the user provided no arguments, just create an empty argument array.
-	    arguments = new HashMap<String, String>();
-	}
 	
-	arguments.put( "GET", method);  // Add the method to the post data.
-	arguments.put( "nonce",  "" + ++_nonce);  // Add the dummy nonce.
-
-	String postData = "";
-
-	for( Iterator argumentIterator = arguments.entrySet().iterator(); argumentIterator.hasNext(); ) {
-	    Map.Entry argument = (Map.Entry)argumentIterator.next();
-	    
-	    if( postData.length() > 0) {
-		postData += "&";
-	    }
-	    postData += argument.getKey() + "=" + argument.getValue();
-	}
-
-       // Create a new secret key
-       key = new SecretKeySpec( _secret.getBytes( "UTF-8"), "HmacSHA512" ); 
-
-	// Create a new mac
-	try {
-	    mac = Mac.getInstance( "HmacSHA512" );
-	} catch( NoSuchAlgorithmException nsae) {
-	    System.err.println( "No such algorithm exception: " + nsae.toString());
-	    return null;
-	}
-
-	// Init mac with key.
-	try {
-	    mac.init( key);
-	} catch( InvalidKeyException ike) {
-	    System.err.println( "Invalid key exception: " + ike.toString());
-	    return null;
-	}
-
-	// Add the key to the header lines.
-	headerLines.put( "Key", _key);
-
-	// Encode the post data by the secret and encode the result as base64.
-	try {
-	    headerLines.put( "Sign", Hex.encodeHexString( mac.doFinal( postData.getBytes( "UTF-8"))));
-	} catch( UnsupportedEncodingException uee) {
-	    System.err.println( "Unsupported encoding exception: " + uee.toString());
-	    return null;
-	} 
-	
-	// Now do the actual request
-	String requestResult = HttpUtils.httpPost( "https://" + DOMAIN + "/tapi", headerLines, postData);
-
-	if( requestResult != null) {   // The request worked
-
-	    try {
-		// Convert the HTTP request return value to JSON to parse further.
-		JSONObject jsonResult = JSONObject.fromObject( requestResult);
-
-		// Check, if the request was successful
-		int success = jsonResult.getInt( "success");
-
-		if( success == 0) {  // The request failed.
-		    String errorMessage = jsonResult.getString( "error");
-		    
-		    System.err.println( "btc-e.com trade API request failed: " + errorMessage);
-
-		    return null;
-		} else {  // Request succeeded!
-		    return jsonResult.getJSONObject( "return");
+	public static void getExchangeRates() {
+		exchangeRate = new HashMap<>();
+		negExchangeRate = new HashMap<>();
+		try {
+			for(String pair : pairings) {
+				//System.out.println("Current url:" + "https://btc-e.com/api/3/ticker/" + pair);
+				HttpResponse<JsonNode> jsonResponse = Unirest.get("https://btc-e.com/api/3/ticker/" + pair).asJson();
+				Double rate = (jsonResponse.getBody().getObject().getJSONObject(pair).getDouble("avg"));
+				exchangeRate.put(pair, rate);
+				negExchangeRate.put(pair, -Math.log(rate));
+				//System.out.println(pair + ":" + -Math.log(rate));
+			}
+			
+		} catch (UnirestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-	    } catch( JSONException je) {
-		System.err.println( "Cannot parse json request result: " + je.toString());
-
-		return null;  // An error occured...
-	    }
-	} 
-
-	return null;  // The request failed.
-    } 
+		
+	}
+	
     public static void main(String[] args) {
-        // original exchange rates
-        Double BTCUSD1 = 931.809;
-        Double LTCBTC1 = 0.00437;
-        Double BTCRUR1 = 54985.93752;
-        Double BTCEUR1 = 865.248;
-        Double LTCUSD1 = 4.069039;
-        Double LTCRUR1 = 239.63;
-        Double LTCEUR1 = 3.784;
-        Double NMCBTC1 = 0.00056;
-        Double NMCUSD1 = 0.516;
-        Double NVCBTC1 = 0.00236;
-        Double NVCUSD1 = 2.204;
-        Double USDRUR1 = 58.94;
-        Double EURUSD1 = 1.07957;
-        Double EURRUR1 = 63.86889;
-        Double PPCBTC1 = 0.00056;    
-        Double PPCUSD1 = 0.517;
-        Double DSHBTC1 = 0.10433;
-        Double DSHUSD1 = 97.56782;
-        Double DSHRUR1 = 5694.085;
-        Double DSHEUR1 = 90.329;
-        Double DSHLTC1 = 23.877;
-        Double DSHETH1 = 1.96;
-        Double ETHBTC1 = 0.05308;
-        Double ETHUSD1 = 49.50001;
-        Double ETHRUR1 = 2930.48608;
-        Double ETHEUR1 = 46.17211;
-        Double ETHLTC1 = 12.17379;
-        //creating -Log of original exchange rates to use in bellman ford
-        Double BTCUSD = -Math.log(BTCUSD1);
-        Double LTCBTC = -Math.log(LTCBTC1);
-        Double BTCRUR = -Math.log(BTCRUR1);
-        Double BTCEUR = -Math.log(BTCEUR1);
-        Double LTCUSD = -Math.log(LTCUSD1);
-        Double LTCRUR = -Math.log(LTCRUR1);
-        Double LTCEUR = -Math.log(LTCEUR1);
-        Double NMCBTC = -Math.log(NMCBTC1);
-        Double NMCUSD = -Math.log(NMCUSD1);
-        Double NVCBTC = -Math.log(NVCBTC1);
-        Double NVCUSD = -Math.log(NVCUSD1);
-        Double USDRUR = -Math.log(USDRUR1);
-        Double EURUSD = -Math.log(EURUSD1);
-        Double EURRUR = -Math.log(EURRUR1);        
-        Double PPCBTC = -Math.log(PPCBTC1);
-        Double PPCUSD = -Math.log(PPCUSD1);
-        Double DSHBTC = -Math.log(DSHBTC1);
-        Double DSHUSD = -Math.log(DSHUSD1);
-        Double DSHRUR = -Math.log(DSHRUR1);
-        Double DSHEUR = -Math.log(DSHEUR1);
-        Double DSHLTC = -Math.log(DSHLTC1);
-        Double DSHETH = -Math.log(DSHETH1);
-        Double ETHBTC = -Math.log(ETHBTC1);
-        Double ETHUSD = -Math.log(ETHUSD1);
-        Double ETHRUR = -Math.log(ETHRUR1);
-        Double ETHEUR = -Math.log(ETHEUR1);
-        Double ETHLTC = -Math.log(ETHLTC1);
+    	
+    	//get new exchange rates
+    	getExchangeRates();
+
         //creating set of vertices with currencies as their value
         Vertex BTC =new Vertex(Currency.BTC, "BTC");
         Vertex USD =new Vertex(Currency.USD, "USD");
@@ -199,29 +105,7 @@ public class Currency_Arbitrage {
         Vertex PPC =new Vertex(Currency.PPC, "PPC");
         Vertex DSH =new Vertex(Currency.DSH, "DSH");
         Vertex ETH =new Vertex(Currency.ETH, "ETH");
-        
-//        ArrayList<Edge> testEdges = new ArrayList<>();
-//        ArrayList<Vertex> testVertices = new ArrayList<>();
-//        testVertices.add(BTC);
-//        testVertices.add(LTC);
-//        testVertices.add(USD);
-//        testVertices.add(RUR);
-//        testVertices.add(EUR);
-//        Edge zero = new Edge(EUR,BTC, 5);
-//        Edge one = new Edge(BTC,USD, -7);
-//        Edge two = new Edge(USD,LTC, -4);
-//        Edge three = new Edge(LTC,BTC, -3);
-//        Edge four = new Edge(USD,EUR, 3);
-//        Edge five = new Edge(USD,RUR, -5);
-//        Edge six = new Edge(RUR,BTC, -3);
-//        testEdges.add(one);
-//        testEdges.add(two);
-//        testEdges.add(three);
-//        testEdges.add(zero);
-//        testEdges.add(four);
-//        testEdges.add(five);
-//        testEdges.add(six);
-//        Graph testGraph = new Graph(testVertices,testEdges);
+
         //creating ArrayList of vertexes to use in bellman ford
         ArrayList<Vertex> currencies = new ArrayList<>();
         currencies.add(BTC); //0
@@ -235,33 +119,34 @@ public class Currency_Arbitrage {
         currencies.add(DSH); //8
         currencies.add(ETH); //9
         //creating edges to use in bellman ford
-        Edge btcusd =new Edge(BTC,USD,BTCUSD);
-        Edge ltcbtc =new Edge(LTC,BTC,LTCBTC);
-        Edge btcrur =new Edge(BTC,RUR,BTCRUR);
-        Edge btceur =new Edge(BTC,EUR,BTCEUR);
-        Edge ltcusd =new Edge(LTC,USD,LTCUSD);
-        Edge ltcrur =new Edge(LTC,RUR,LTCRUR);
-        Edge ltceur =new Edge(LTC,EUR,LTCEUR);
-        Edge nmcbtc =new Edge(NMC,BTC,NMCBTC);
-        Edge nmcusd =new Edge(NMC,USD,NMCUSD);
-        Edge nvcbtc =new Edge(NVC,BTC,NVCBTC);
-        Edge nvcusd =new Edge(NVC,USD,NVCUSD);
-        Edge usdrur =new Edge(USD,RUR,USDRUR);
-        Edge eurusd =new Edge(EUR,USD,EURUSD);
-        Edge eurrur =new Edge(EUR,RUR,EURRUR);
-        Edge ppcbtc =new Edge(PPC,BTC,PPCBTC);
-        Edge dshbtc =new Edge(DSH,BTC,DSHBTC);
-        Edge dshusd =new Edge(DSH,USD,DSHUSD);
-        Edge dshrur =new Edge(DSH,RUR,DSHRUR);
-        Edge dsheur =new Edge(DSH,EUR,DSHEUR);
-        Edge dshltc =new Edge(DSH,LTC,DSHLTC);
-        Edge dsheth =new Edge(DSH,ETH,DSHETH);
-        Edge ethbtc =new Edge(ETH,BTC,ETHBTC);
-        Edge ethusd =new Edge(ETH,USD,ETHUSD);
-        Edge ethrur =new Edge(ETH,RUR,ETHRUR);
-        Edge etheur =new Edge(ETH,EUR,ETHEUR);
-        Edge ethltc =new Edge(ETH,LTC,ETHLTC);
-        Edge ppcusd =new Edge(PPC,USD,PPCUSD);
+       
+        Edge btcusd =new Edge(BTC,USD,negExchangeRate.get("btc_usd"));
+        Edge ltcbtc =new Edge(LTC,BTC,negExchangeRate.get("ltc_btc"));
+        Edge btcrur =new Edge(BTC,RUR,negExchangeRate.get("btc_rur"));
+        Edge btceur =new Edge(BTC,EUR,negExchangeRate.get("btc_eur"));
+        Edge ltcusd =new Edge(LTC,USD,negExchangeRate.get("ltc_usd"));
+        Edge ltcrur =new Edge(LTC,RUR,negExchangeRate.get("ltc_rur"));
+        Edge ltceur =new Edge(LTC,EUR,negExchangeRate.get("ltc_eur"));
+        Edge nmcbtc =new Edge(NMC,BTC,negExchangeRate.get("nmc_btc"));
+        Edge nmcusd =new Edge(NMC,USD,negExchangeRate.get("nmc_usd"));
+        Edge nvcbtc =new Edge(NVC,BTC,negExchangeRate.get("nvc_btc"));
+        Edge nvcusd =new Edge(NVC,USD,negExchangeRate.get("nvc_usd"));
+        Edge usdrur =new Edge(USD,RUR,negExchangeRate.get("usd_rur"));
+        Edge eurusd =new Edge(EUR,USD,negExchangeRate.get("eur_usd"));
+        Edge eurrur =new Edge(EUR,RUR,negExchangeRate.get("eur_rur"));
+        Edge ppcbtc =new Edge(PPC,BTC,negExchangeRate.get("ppc_btc"));
+        Edge dshbtc =new Edge(DSH,BTC,negExchangeRate.get("dsh_btc"));
+        Edge dshusd =new Edge(DSH,USD,negExchangeRate.get("dsh_usd"));
+        Edge dshrur =new Edge(DSH,RUR,negExchangeRate.get("dsh_rur"));
+        Edge dsheur =new Edge(DSH,EUR,negExchangeRate.get("dsh_eur"));
+        Edge dshltc =new Edge(DSH,LTC,negExchangeRate.get("dsh_ltc"));
+        Edge dsheth =new Edge(DSH,ETH,negExchangeRate.get("dsh_eth"));
+        Edge ethbtc =new Edge(ETH,BTC,negExchangeRate.get("eth_btc"));
+        Edge ethusd =new Edge(ETH,USD,negExchangeRate.get("eth_usd"));
+        Edge ethrur =new Edge(ETH,RUR,negExchangeRate.get("eth_rur"));
+        Edge etheur =new Edge(ETH,EUR,negExchangeRate.get("eth_eur"));
+        Edge ethltc =new Edge(ETH,LTC,negExchangeRate.get("eth_ltc"));
+        Edge ppcusd =new Edge(PPC,USD,negExchangeRate.get("ppc_usd"));
         //creating list of these edges
         ArrayList<Edge> edges = new ArrayList<>();
         edges.add(btcusd);
@@ -298,6 +183,9 @@ public class Currency_Arbitrage {
             allEdges.add(edges.get(i));
             Edge e = new Edge(edges.get(i).dest,edges.get(i).src, -edges.get(i).weight);
             allEdges.add(e);
+
+            //System.out.println(edges.get(i).weight);
+
         }
 
         Graph graph = new Graph(currencies,allEdges);
@@ -307,11 +195,8 @@ public class Currency_Arbitrage {
         String n = reader.next();
         Vertex src = graph.findSource(n,graph.vertices);
         graph.BellmanFord(graph, src);
-///**********
-//        Vertex src = testGraph.findSource(n,testGraph.vertices);
-//        testGraph.BellmanFord(testGraph, src);
-/************/
+
+
     }
     
 }
-
