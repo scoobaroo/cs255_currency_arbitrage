@@ -1,2 +1,8 @@
 /JavaApplication3/nbproject/private/
 /JavaApplication3/build/
+/bin/
+/target/
+.DS_Store
+.classpath
+.project
+.settings/
