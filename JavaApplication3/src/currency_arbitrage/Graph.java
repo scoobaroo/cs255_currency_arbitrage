@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
-/**
- *
- * @author suejanehan
- */
 public class Graph {
     public ArrayList<Vertex> vertices;
     public ArrayList<Edge> edges;
@@ -28,14 +24,7 @@ public class Graph {
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-<<<<<<< HEAD
-        HashMap<Vertex, Double> dist = new HashMap(vertices.size());
-
-=======
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-		HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
- 
->>>>>>> add-btc-api--rs
+        HashMap<Vertex, Double> dist = new HashMap<Vertex, Double>(vertices.size());
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
         for(i=0;i<vertices.size();i++){
