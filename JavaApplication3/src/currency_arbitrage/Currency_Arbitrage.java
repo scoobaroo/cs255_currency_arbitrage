@@ -7,34 +7,17 @@ package currency_arbitrage;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.lang.*;
-import java.io.*;
-import java.net.URL;
-import java.io.IOException;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import static com.sun.jmx.defaults.ServiceName.DOMAIN;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import org.json.*;
-
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.sun.grizzly.util.*; 
-import static java.lang.Math.*;
+
 
 /**
  *
  * @author suejanehan
  */
+
 public class Currency_Arbitrage {
 	private static String [] pairings = {
 			"btc_usd",
@@ -70,8 +53,8 @@ public class Currency_Arbitrage {
 
 	
 	public static void getExchangeRates() {
-		exchangeRate = new HashMap<>();
-		negExchangeRate = new HashMap<>();
+		exchangeRate = new HashMap<String, Double>();
+		negExchangeRate = new HashMap<String, Double>();
 		try {
 			for(String pair : pairings) {
 				//System.out.println("Current url:" + "https://btc-e.com/api/3/ticker/" + pair);
@@ -107,7 +90,7 @@ public class Currency_Arbitrage {
         Vertex ETH =new Vertex(Currency.ETH, "ETH");
 
         //creating ArrayList of vertexes to use in bellman ford
-        ArrayList<Vertex> currencies = new ArrayList<>();
+        ArrayList<Vertex> currencies = new ArrayList<Vertex>();
         currencies.add(BTC); //0
         currencies.add(USD); //1
         currencies.add(LTC); //2
@@ -148,7 +131,7 @@ public class Currency_Arbitrage {
         Edge ethltc =new Edge(ETH,LTC,negExchangeRate.get("eth_ltc"));
         Edge ppcusd =new Edge(PPC,USD,negExchangeRate.get("ppc_usd"));
         //creating list of these edges
-        ArrayList<Edge> edges = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<Edge>();
         edges.add(btcusd);
         edges.add(ltcbtc);
         edges.add(btcrur);
@@ -177,15 +160,13 @@ public class Currency_Arbitrage {
         edges.add(ethltc);
         edges.add(ppcusd);
               
-        ArrayList<Edge> allEdges = new ArrayList<>();
+        ArrayList<Edge> allEdges = new ArrayList<Edge>();
         //creating new edges for reversing directions of edges with new weights, sources, and destinations
         for (int i = 0; i< edges.size() ; i++){
             allEdges.add(edges.get(i));
             Edge e = new Edge(edges.get(i).dest,edges.get(i).src, -edges.get(i).weight);
             allEdges.add(e);
-
             //System.out.println(edges.get(i).weight);
-
         }
 
         Graph graph = new Graph(currencies,allEdges);

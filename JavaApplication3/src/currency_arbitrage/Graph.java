@@ -28,7 +28,8 @@ public class Graph {
         int i,j;
         vertices = graph.vertices;
         edges = graph.edges;
-        HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+		HashMap<Vertex, Double> dist = new HashMap(vertices.size());   
  
         // Step 1: Initialize distances from src to all other
         // vertices as INFINITE
@@ -62,12 +63,12 @@ public class Graph {
             Vertex v = edges.get(k).dest;
             Edge e = edges.get(k);
             if (dist.get(u)+e.weight<dist.get(v)){
-              totalCycles +=1;
+              totalCycles ++;
               System.out.println("\n=================================================================================");
               System.out.println("Graph contains negative weight cycle");
               System.out.println("Cycle starts with " + v.name+ " connected to " + u.name);
               path(u,v);
-              LinkedHashSet cycle = new LinkedHashSet<>();
+              LinkedHashSet<Vertex> cycle = new LinkedHashSet<Vertex>();
               while(cycle.add(v)){
                   v=v.predecessor;
               }
@@ -80,12 +81,13 @@ public class Graph {
     
     void path(Vertex u, Vertex v){
         System.out.println("INSIDE PATH FUNCTION");
-        LinkedHashSet cycle = new LinkedHashSet<>();
-        ArrayList<Vertex> cycleArrayList = new ArrayList<>();
+        LinkedHashSet<Vertex> cycle = new LinkedHashSet<Vertex>();
+        ArrayList<Vertex> cycleArrayList = new ArrayList<Vertex>();
         while(cycle.add(v)){
             cycleArrayList.add(v);
             v = v.predecessor;          
         }
+        Double maxWeight = 0.0;
         Double begin = 1.0;
         Double cycleWeight = 0.0;
         for(int k=0; k<cycleArrayList.size(); k++){
@@ -101,13 +103,18 @@ public class Graph {
         Edge lastEdge = findEdge(cycleArrayList.get(cycleArrayList.size()-1),cycleArrayList.get(0));
         if(lastEdge!=null){
             cycleWeight += lastEdge.weight;
+            if(cycleWeight> maxWeight){
+            	maxWeight = cycleWeight;
+            }
+            maxWeight = cycleWeight;
             begin *= Math.exp(lastEdge.weight);
-
             System.out.println(Math.exp(cycleWeight));
             System.out.println("Starting with 1 " +v.name+ " we can end up with " + begin +" "+v.name +" by utilizing the negative cycle");
     
-        } else
+        } else {
             System.out.println("\nCouldn't find final edge");
+        }
+        System.out.println("Maximum negative weight cycle is:" + Math.exp(maxWeight));
     }
     
     void printCycle(LinkedHashSet<Vertex> c){
